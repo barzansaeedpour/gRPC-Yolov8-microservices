@@ -1,0 +1,204 @@
+# FROM python:3.12-alpine
+
+# ARG OPENCV_VERSION
+
+# WORKDIR /opt/build
+
+# RUN set -ex \
+#     && echo "@edge http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
+#     && echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+#     && echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+#     && apk add -q --update --no-cache \
+#         build-base cmake \
+#         wget unzip \
+#         hdf5 hdf5-dev \
+#         protobuf protobuf-dev \
+#         openblas openblas-dev@community \
+#         libjpeg libjpeg-turbo-dev \
+#         libpng libpng-dev \
+#         tiff tiff-dev \
+#         libwebp libwebp-dev \
+#         openjpeg openjpeg-dev openjpeg-tools \
+#         libtbb@testing libtbb-dev@testing \
+#         eigen eigen-dev \
+#         tesseract-ocr tesseract-ocr-data-por tesseract-ocr-dev \
+#         py3-pip python3-dev \
+#         linux-headers \
+#     && pip install -q numpy \
+#     && wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv.zip \
+#     && wget -q https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip -O opencv_contrib.zip \
+#     && unzip -qq opencv.zip -d /opt && rm -rf opencv.zip \
+#     && unzip -qq opencv_contrib.zip -d /opt && rm -rf opencv_contrib.zip \
+#     && cmake \
+#         -D CMAKE_BUILD_TYPE=RELEASE \
+#         -D CMAKE_INSTALL_PREFIX=/usr/local \
+#         -D OPENCV_EXTRA_MODULES_PATH=/opt/opencv_contrib-${OPENCV_VERSION}/modules \
+#         -D EIGEN_INCLUDE_PATH=/usr/include/eigen3 \
+#         -D OPENCV_ENABLE_NONFREE=ON \
+#         -D WITH_JPEG=ON \
+#         -D WITH_PNG=ON \
+#         -D WITH_TIFF=ON \
+#         -D WITH_WEBP=ON \
+#         -D WITH_JASPER=ON \
+#         -D WITH_EIGEN=ON \
+#         -D WITH_TBB=ON \
+#         -D WITH_LAPACK=ON \
+#         -D WITH_PROTOBUF=ON \
+#         -D WITH_V4L=OFF \
+#         -D WITH_GSTREAMER=OFF \
+#         -D WITH_GTK=OFF \
+#         -D WITH_QT=OFF \
+#         -D WITH_CUDA=OFF \
+#         -D WITH_VTK=OFF \
+#         -D WITH_OPENEXR=OFF \
+#         -D WITH_FFMPEG=OFF \
+#         -D WITH_OPENCL=OFF \
+#         -D WITH_OPENNI=OFF \
+#         -D WITH_XINE=OFF \
+#         -D WITH_GDAL=OFF \
+#         -D WITH_IPP=OFF \
+#         -D BUILD_OPENCV_PYTHON3=ON \
+#         -D BUILD_OPENCV_PYTHON2=OFF \
+#         -D BUILD_OPENCV_JAVA=OFF \
+#         -D BUILD_TESTS=OFF \
+#         -D BUILD_IPP_IW=OFF \
+#         -D BUILD_PERF_TESTS=OFF \
+#         -D BUILD_EXAMPLES=OFF \
+#         -D BUILD_ANDROID_EXAMPLES=OFF \
+#         -D BUILD_DOCS=OFF \
+#         -D BUILD_ITT=OFF \
+#         -D INSTALL_PYTHON_EXAMPLES=OFF \
+#         -D INSTALL_C_EXAMPLES=OFF \
+#         -D INSTALL_TESTS=OFF \
+#         -D PYTHON3_EXECUTABLE=/usr/local/bin/python \
+#         -D PYTHON3_INCLUDE_DIR=/usr/local/include/python3.12/ \
+#         -D PYTHON3_LIBRARY=/usr/local/lib/libpython3.so \
+#         -D PYTHON_LIBRARY=/usr/local/lib/libpython3.so \
+#         -D PYTHON3_PACKAGES_PATH=/usr/local/lib/python3.12/site-packages/ \
+#         -D PYTHON3_NUMPY_INCLUDE_DIRS=/usr/local/lib/python3.12/site-packages/numpy/core/include/ \
+#         /opt/opencv-${OPENCV_VERSION} \
+#     && make -j$(nproc) \
+#     && make install \
+#     && rm -rf /opt/build/* \
+#     && rm -rf /opt/opencv-${OPENCV_VERSION} \
+#     && rm -rf /opt/opencv_contrib-${OPENCV_VERSION} \
+#     && apk del -q --no-cache \
+#         build-base cmake \
+#         hdf5-dev \
+#         protobuf-dev \
+#         openblas-dev \
+#         libjpeg-turbo-dev \
+#         libpng-dev \
+#         tiff-dev \
+#         libwebp-dev \
+#         openjpeg-dev \
+#         libtbb-dev \
+#         eigen-dev \
+#         tesseract-ocr-dev \
+#         py3-numpy-dev \
+#         python3-dev \
+#         linux-headers
+
+
+############################################        
+# # FROM python:3.9-slim
+
+# # FROM python:3.10
+# FROM ubuntu:24.04
+
+# RUN apt-get update
+# RUN apt-get install python3 -y
+# RUN apt-get install python3-pip -y
+# # RUN apt-get install python3-opencv
+
+# # RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx && rm -rf /var/lib/apt/lists/*
+# # RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+# # RUN apt-get update && apt-get install libgl1 -y
+
+# WORKDIR /code
+
+# # COPY ultralytics ultralytics 
+# # COPY cv2 cv2
+# # COPY torch torch 
+# # COPY torchvision torchvision 
+# # COPY tqdm tqdm 
+
+# RUN pip3 install numpy
+# # COPY ./requirements.txt /code/requirements.txt
+
+# # RUN pip3 install -r /code/requirements.txt
+
+# # COPY ./app.py /code/
+# # COPY ./camera_pb2_grpc.py /code/
+# # COPY ./camera_pb2.py /code/
+# # COPY ./camera_pb2.pyi /code/
+
+# # CMD ["python", "/code/app.py"]
+
+#####################################################
+
+
+# # Dockerfile
+# FROM ubuntu:latest
+
+# # Update package list and install Python
+# RUN apt-get update && \
+#     apt-get install -y python3 python3-pip
+
+# WORKDIR /code
+
+
+# COPY ./requirements.txt /code/requirements.txt
+
+# RUN pip install -r /code/requirements.txt
+
+# # Set working directory
+# # WORKDIR /app
+
+# # Copy your application files (if any)
+# COPY ./app.py /code/
+# COPY ./camera_pb2_grpc.py /code/
+# COPY ./camera_pb2.py /code/
+# COPY ./camera_pb2.pyi /code/
+
+# # Example: Run a Python script
+# # CMD ["python3", "my_script.py"]
+# CMD ["python", "/code/app.py"]
+####################################################
+# Dockerfile
+# FROM ubuntu:latest
+FROM jjanzic/docker-python3-opencv:latest
+
+
+# ENV TZ=Asia/Kolkata \
+#     DEBIAN_FRONTEND=noninteractive
+
+# Update package list and install Python
+# RUN apt-get update && \
+#     apt-get install -y python3 python3-pip
+
+# Install numpy using pip
+# RUN pip3 install numpy
+
+# Install OpenCV dependencies
+# RUN apt-get install -y libopencv-dev
+
+# Install OpenCV using pip
+# RUN pip3 install opencv-python-headless
+
+# Set working directory
+WORKDIR /app
+
+# Copy your application files (if any)
+RUN python -m pip install --upgrade pip
+RUN python -m pip install numpy
+RUN python -m pip install grpcio grpcio-tools protobuf
+RUN python -m pip install opencv-python
+
+# COPY ./requirements.txt /code/requirements.txt
+# RUN pip install -r /code/requirements.txt
+# RUN pip install -r /code/requirements.txt
+
+# Example: Run a Python script
+# CMD ["python3", "my_script.py"]
+

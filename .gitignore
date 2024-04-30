@@ -1,0 +1,10 @@
+/client/env
+/server/env
+client/__pycache__
+client/saved_images
+client/my_yolo_v8/outputs
+client/my_yolo_v8/models
+server/saved_images
+server/__pycache__
+server/files
+web_app/env

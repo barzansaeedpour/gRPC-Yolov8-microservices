@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  # Client
+  plate-detection-client:
+    # image: my_yolov822:latest
+    build: 
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: plate-detection:latest
+    # restart: always
+    depends_on:
+      - camera-service-server
+    volumes:
+      - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
+      - D:/gRPC-Yolov8-microservices/client/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
+
+  # Server
+  camera-service-server:
+    # image: camera_service22:latest
+    build: 
+      context: ./server
+      dockerfile: ./Dockerfile
+    image: camera-service:latest
+    # restart: always
+    volumes:
+      - D:/gRPC-Yolov8-microservices/server/saved_images:/code/saved_images
+      - D:/gRPC-Yolov8-microservices/server/files:/code/files
+
+    # environment:
+    #   - DISPLAY=:0  # Set the display environment variable
+    # volumes:
+    #   - /tmp/.X11-unix:/tmp/.X11-unix  # Mount X11 socket for GUI applications
+    # devices:
+    #   - /dev/video0:/dev/video0  # Map the camera device
+
+
+
+# volumes:
+#   plate-detection-client:
+#     - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images

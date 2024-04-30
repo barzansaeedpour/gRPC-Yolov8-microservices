@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+service Camera {
+    rpc StreamCamera(CameraFrame) returns (stream CameraFrame);
+}
+
+message CameraFrame {
+    bytes frame = 1;
+}
