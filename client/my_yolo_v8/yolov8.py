@@ -6,6 +6,7 @@ import numpy as np
 import math
 import time
 from PIL import ImageFont, ImageDraw, Image
+from my_yolo_v8.rabbitmq.publisher import publish
 
 from my_yolo_v8.utils.utils import extract_the_plate, check_detected_classes_validation, get_new_name, persian
 
@@ -95,5 +96,6 @@ def plate_detection(frame):
 
         img = np.array(img)
         cv2.imwrite(plate_detection_output_path + new_name +'.png',img)
+        publish(plate= str(detected_classes))
         # cv2.imshow("Real-time Webcam", img)
         # time.sleep(0.1)
