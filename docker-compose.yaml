@@ -9,7 +9,14 @@ services:
         AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
     volumes:
       - ./producer:/usr/src/app/producer
-
+  consumer1:
+    build: consumer
+    depends_on:
+        - rabbit_mq
+    environment:
+        AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+    volumes:
+      - ./consumer:/usr/src/app/consumer
   rabbit_mq:
     # we use management image to get the
     # plugin for web dashboard
