@@ -2,6 +2,10 @@ FROM jjanzic/docker-python3-opencv
 
 WORKDIR /code
 
+# Without this setting, Python never prints anything out.
+ENV PYTHONUNBUFFERED=1
+
+
 EXPOSE 50051
 
 COPY ./app.py /code/

@@ -2,7 +2,8 @@ FROM ultralytics/ultralytics:8.2.2-python
 
 WORKDIR /code
 
-
+# Without this setting, Python never prints anything out.
+ENV PYTHONUNBUFFERED=1
 
 # Copy files
 COPY ./app.py /code/
