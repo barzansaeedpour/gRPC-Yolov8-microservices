@@ -15,10 +15,10 @@ chan = connection.channel()
 chan.queue_declare(queue='hello', durable=True)
 
 # publish a 100 messages to the queue
-for i in range(5):
-    chan.basic_publish(exchange='', routing_key='hello',
-                       body='Hello World', properties=pika.BasicProperties(delivery_mode=2))
-    print("Produced the message")
+# for i in range(1):
+#     chan.basic_publish(exchange='', routing_key='hello',
+#                        body='Hello World', properties=pika.BasicProperties(delivery_mode=2))
+#     print("Produced the message")
 
 # close the channel and connection
 # to avoid program from entering with any lingering
