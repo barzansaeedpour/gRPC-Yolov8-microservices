@@ -2,6 +2,7 @@ from datetime import datetime
 import cv2
 from bidi.algorithm import get_display
 import arabic_reshaper
+import time
 
 def get_new_name():
     # Get the current date and time
@@ -25,7 +26,8 @@ def extract_the_plate(img,  top_left, bottom_right):
     plate = cv2.resize(plate, (700, 300))
     return plate
 
-def check_detected_classes_validation(detected_classes, numbers, letters, path):
+
+def check_detected_classes_validation(detected_classes, numbers, letters, path, boxes):
     not_valid = False
     if len(detected_classes) != 8:
         not_valid = True
@@ -35,9 +37,14 @@ def check_detected_classes_validation(detected_classes, numbers, letters, path):
     #             not_valid = True
     #     if detected_classes[2] not in letters:
     #         not_valid = True
-
+        
+        # sorting
+        all_x1s = [x.xyxy[0][0].item() for x in boxes]
+        all_x1s, detected_classes = zip(*sorted(zip(all_x1s , detected_classes )))
+        
         with open(f"{path}detection.txt", "a") as file:
             # Write content to the file
             text = str(detected_classes)+'\n'
             file.write(f"{text}\n")
+            time.sleep(0.1)
     return not_valid
