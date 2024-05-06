@@ -31,6 +31,7 @@ def check_detected_classes_validation(detected_classes, numbers, letters, path, 
     not_valid = False
     if len(detected_classes) != 8:
         not_valid = True
+        return not_valid , ''
     else:    
     #     for i in [0,1,3,4,5,6,7]: 
     #         if detected_classes[i] not in numbers:
@@ -44,7 +45,8 @@ def check_detected_classes_validation(detected_classes, numbers, letters, path, 
         
         with open(f"{path}detection.txt", "a") as file:
             # Write content to the file
+            detected_classes = ''.join(detected_classes)
             text = str(detected_classes)+'\n'
             file.write(f"{text}\n")
             time.sleep(0.1)
-    return not_valid
+        return not_valid, detected_classes

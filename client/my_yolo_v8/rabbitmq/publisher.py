@@ -5,6 +5,7 @@ import time
 
 # read rabbitmq connection url from environment variable
 def publish(plate:str):
+    print('********plate:',plate,'********')
     # pass
     # read rabbitmq connection url from environment variable
     amqp_url = os.environ['AMQP_URL']
