@@ -62,7 +62,7 @@ def handle_message(data):
     print("data from the front end: ",str(data))
     emit("data",{'data':data,'id':request.sid},broadcast=True)
     
-
+ 
 @socketio.on("disconnect")
 def disconnected():
     """event listener when client disconnects to the server"""
