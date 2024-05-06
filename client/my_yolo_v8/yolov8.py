@@ -59,9 +59,10 @@ def plate_detection(frame):
     
         for r in results2:
             boxes = r.boxes
-            detected_classes = [int(box.cls) for box in boxes]
+            detected_classes = [int(box.cls) for box in boxes]   
+            
             detected_classes = [classNames2[i] for i in detected_classes]
-            continue_flag = check_detected_classes_validation(detected_classes, numbers, letters, plate_detection_output_path)
+            continue_flag = check_detected_classes_validation(detected_classes, numbers, letters, plate_detection_output_path, boxes)
         if continue_flag:
             continue    
         img = Image.fromarray(extracted_plate_image)
