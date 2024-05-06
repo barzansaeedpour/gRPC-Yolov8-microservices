@@ -8,7 +8,7 @@ import os
 from my_yolo_v8.yolov8 import plate_detection
 ###################################################
 from flask import Flask, request, jsonify
-from flask_socketio import SocketIO,emit
+from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 ######################################
 

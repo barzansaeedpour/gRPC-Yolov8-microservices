@@ -26,9 +26,6 @@ def extract_the_plate(img,  top_left, bottom_right):
     return plate
 
 def check_detected_classes_validation(detected_classes, numbers, letters, path):
-   
-    
-    
     not_valid = False
     if len(detected_classes) != 8:
         not_valid = True
