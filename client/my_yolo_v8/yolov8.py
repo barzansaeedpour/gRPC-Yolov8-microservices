@@ -6,7 +6,7 @@ import numpy as np
 import math
 import time
 from PIL import ImageFont, ImageDraw, Image
-from my_yolo_v8.rabbitmq.publisher import publish
+# from my_yolo_v8.rabbitmq.publisher import publish
 
 from my_yolo_v8.utils.utils import extract_the_plate, check_detected_classes_validation, get_new_name, persian
 
@@ -15,7 +15,7 @@ from my_yolo_v8.utils.utils import extract_the_plate, check_detected_classes_val
 model_plate_detection = YOLO(f"./my_yolo_v8/models/plate-detector.pt")
 model_character_detection = YOLO(f"./my_yolo_v8/models/character-detector.pt")
 
-plate_detection_output_path = "/code/my_yolo_v8/outputs/"
+plate_detection_output_path = "./my_yolo_v8/outputs/"
 try:
     shutil.rmtree(plate_detection_output_path)
 except:
@@ -59,9 +59,10 @@ def plate_detection(frame):
     
         for r in results2:
             boxes = r.boxes
-            detected_classes = [int(box.cls) for box in boxes]
+            detected_classes = [int(box.cls) for box in boxes]   
+            
             detected_classes = [classNames2[i] for i in detected_classes]
-            continue_flag = check_detected_classes_validation(detected_classes, numbers, letters, plate_detection_output_path)
+            continue_flag = check_detected_classes_validation(detected_classes, numbers, letters, plate_detection_output_path, boxes)
         if continue_flag:
             continue    
         img = Image.fromarray(extracted_plate_image)
@@ -96,6 +97,7 @@ def plate_detection(frame):
 
         img = np.array(img)
         cv2.imwrite(plate_detection_output_path + new_name +'.png',img)
-        publish(plate= str(detected_classes))
+        time.sleep(0.1)
+        # publish(plate= str(detected_classes))
         # cv2.imshow("Real-time Webcam", img)
         # time.sleep(0.1)

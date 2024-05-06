@@ -8,3 +8,5 @@ server/saved_images
 server/__pycache__
 server/files
 web_app/env
+client/.vscode/launch.json
+client/video_test.mp4
