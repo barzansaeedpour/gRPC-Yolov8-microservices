@@ -97,8 +97,8 @@ def plate_detection(frame):
 
         img = np.array(img)
         cv2.imwrite(plate_detection_output_path + new_name +'.png',img)
-        
-        publish(plate= detected_classes)
         time.sleep(0.1)
+        return detected_classes
         # cv2.imshow("Real-time Webcam", img)
         # time.sleep(0.1)
+    return ''

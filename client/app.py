@@ -5,7 +5,9 @@ import camera_pb2_grpc
 import numpy as np
 from datetime import datetime
 import os
+import json
 from my_yolo_v8.yolov8 import plate_detection
+from my_yolo_v8.rabbitmq.publisher import publish
 ###################################################
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, emit
@@ -13,6 +15,9 @@ from flask_cors import CORS
 ######################################
 
 save_dir = '/code/saved_images/'
+plate_detection_output_path = "/code/my_yolo_v8/outputs/"
+
+
 import shutil
 try:
     shutil.rmtree(save_dir)
@@ -72,6 +77,7 @@ def disconnected():
 
 
 def stream_camera():
+    detected_plates = {}
     with grpc.insecure_channel("camera-service-server:50051") as channel:
         stub = camera_pb2_grpc.CameraStub(channel)
         # response = stub.StreamCamera(camera_pb2.CameraFrame())
@@ -83,7 +89,18 @@ def stream_camera():
                 frame = response.frame
                 nparr = np.frombuffer(frame, np.uint8)
                 frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                plate_detection(frame)
+                detected_plate = plate_detection(frame)
+                if detected_plate:
+                    if detected_plate in detected_plates.keys():
+                        detected_plates[detected_plate] +=1
+                        with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
+                            # file.write(f"{str(detected_plates)}\n")
+                            json.dump(detected_plates, file)
+                        if detected_plates[detected_plate] > 2:
+                            publish(plate= detected_plate)
+                            print(200*'*')
+                    else:
+                        detected_plates[detected_plate] = 1
                 new_name = get_new_name()
                 # print(new_name)
                 b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)

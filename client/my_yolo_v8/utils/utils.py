@@ -46,7 +46,7 @@ def check_detected_classes_validation(detected_classes, numbers, letters, path, 
         with open(f"{path}detection.txt", "a") as file:
             # Write content to the file
             detected_classes = ''.join(detected_classes)
-            text = str(detected_classes)+'\n'
+            text = str(detected_classes)
             file.write(f"{text}\n")
             time.sleep(0.1)
         return not_valid, detected_classes
