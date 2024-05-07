@@ -24,7 +24,7 @@ try:
 except:
     pass
 os.makedirs(save_dir, exist_ok=True)
-
+ 
 
 def get_new_name():
     # Get the current date and time
@@ -96,9 +96,10 @@ def stream_camera():
                         with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
                             # file.write(f"{str(detected_plates)}\n")
                             json.dump(detected_plates, file)
-                        if detected_plates[detected_plate] > 2:
+                        if detected_plates[detected_plate] > 5:
                             publish(plate= detected_plate)
                             print(200*'*')
+                            
                     else:
                         detected_plates[detected_plate] = 1
                 new_name = get_new_name()
@@ -114,3 +115,5 @@ if __name__== "__main__":
     # socketio.run(app,debug=True,port=5001)
     stream_camera()
     
+
+
