@@ -9,9 +9,9 @@ import json
 from my_yolo_v8.yolov8 import plate_detection
 from my_yolo_v8.rabbitmq.publisher import publish
 ###################################################
-from flask import Flask, request, jsonify
-from flask_socketio import SocketIO, emit
-from flask_cors import CORS
+# from flask import Flask, request, jsonify
+# from flask_socketio import SocketIO, emit
+# from flask_cors import CORS
 ######################################
 
 save_dir = '/code/saved_images/'
@@ -36,43 +36,6 @@ def get_new_name():
     # print(f"Unique filename: {filename}")
     return filename
 
-
-#################################################### Flask webapp
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-CORS(app,resources={r"/*":{"origins":"*"}})
-socketio = SocketIO(app,cors_allowed_origins="*")
-
-@app.route("/")
-def index():
-    data = {'data':'The index page'}
-    return jsonify(data)
-
-@app.route("/http-call")
-def http_call():
-    """return JSON with string data as the value"""
-    data = {'data':'This text was fetched using an HTTP call to server on render'}
-    return jsonify(data)
-
-@socketio.on("connect")
-def connected():
-    """event listener when client connects to the server"""
-    print(request.sid)
-    print("client has connected")
-    emit("connect",{"data":f"id: {request.sid} is connected"})
-
-@socketio.on('data')
-def handle_message(data):
-    """event listener when client types a message"""
-    print("data from the front end: ",str(data))
-    emit("data",{'data':data,'id':request.sid},broadcast=True)
-    
- 
-@socketio.on("disconnect")
-def disconnected():
-    """event listener when client disconnects to the server"""
-    print("user disconnected")
-    emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
 
 
 
@@ -111,9 +74,73 @@ def stream_camera():
         finally:
             cv2.destroyAllWindows()
 
-if __name__== "__main__":
-    # socketio.run(app,debug=True,port=5001)
-    stream_camera()
+#################################################### Flask webapp
+
+
+from flask import Flask, render_template, request, redirect
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
+db = SQLAlchemy(app)
+
+
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    content = db.Column(db.String(200), nullable = False)
+    completed = db.Column(db.Integer, default = 0)
+    date_created = db.Column(db.DateTime, default = datetime.utcnow)
+
+    def __repr__(self):
+        return '<Task %r' % self.id
+
+
+
+@app.route('/', methods= ['POST', 'GET'])
+def index():
+    if request.method == 'POST':
+        task_content = request.form['content']
+        new_task = Todo(content = task_content)
+        try: 
+            db.session.add(new_task)
+            db.session.commit()
+            return redirect('/')
+        except:
+            return "There was an issue adding your task"
+    else:
+        tasks = Todo.query.order_by(Todo.date_created).all()
+        return render_template('index.html', tasks= tasks)
+
+@app.route('/delete/<int:id>')
+def delete(id):
+    task_to_delete = Todo.query.get_or_404(id)
+    try:
+        db.session.delete(task_to_delete)
+        db.session.commit()
+        return redirect('/')
+    except:
+        return "There was an issue deleting that task"
+    
+@app.route('/update/<int:id>', methods= ['POST', 'GET'])
+def update(id):
+    task_to_update = Todo.query.get_or_404(id)
+    if request.method == "POST":
+        task_to_update.content = request.form['content']
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return "There was an issue updating that task"
+        
+    else:
+        return render_template('update.html', task= task_to_update)
+
+if __name__ == "__main__":
+    # app.run(debug=True) 
+    app.run(debug=False, host='0.0.0.0')
+    with app.app_context():
+        db.create_all()
     
 
 
