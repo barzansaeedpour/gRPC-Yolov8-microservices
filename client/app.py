@@ -85,6 +85,14 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
 db = SQLAlchemy(app)
 
+class Status():
+    def __init__(self, message, statusCode, isSuccess) -> None:
+        self.message = message
+        self.statusCode = statusCode
+        self.isSuccess = isSuccess
+        
+    def error(self):
+        return {"message":self.message, "statusCode": self.statusCode, "isSuccess": self.isSuccess}
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -118,6 +126,29 @@ def index():
     else:
         tasks = Todo.query.order_by(Todo.date_created).all()
         return render_template('index.html', tasks= tasks)
+
+@app.route('/get_claims', methods= ['POST', 'GET'])
+def claims():
+    if request.method == 'GET':
+        claims = Claim.query.all()
+        return claims
+    elif request.method == 'POST':
+        claims = request.form['content']
+    # else:
+        return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
+    
+    # if request.method == 'POST':
+    #     task_content = request.form['content']
+    #     new_task = Todo(content = task_content)
+    #     try: 
+    #         db.session.add(new_task)
+    #         db.session.commit()
+    #         return redirect('/')
+    #     except:
+    #         return "There was an issue adding your task"
+    # else:
+    #     tasks = Todo.query.order_by(Todo.date_created).all()
+    #     return render_template('index.html', tasks= tasks)
 
 @app.route('/delete/<int:id>')
 def delete(id):
