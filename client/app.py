@@ -14,6 +14,9 @@ from my_yolo_v8.rabbitmq.publisher import publish
 # from flask_cors import CORS
 ######################################
 
+base_dir = ''
+
+
 save_dir = '/code/saved_images/'
 plate_detection_output_path = "/code/my_yolo_v8/outputs/"
 
@@ -98,14 +101,14 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     content = db.Column(db.String(200), nullable = False)
     completed = db.Column(db.Integer, default = 0)
-    date_created = db.Column(db.DateTime, default = datetime.utcnow)
+    date_created = db.Column(db.DateTime, default = datetime.now())
 
     def __repr__(self):
         return '<Task %r' % self.id
     
 class Claim(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    content = db.Column(db.String(200), nullable = False)
+    title = db.Column(db.String(200), nullable = False)
     
     def __repr__(self):
         return '<Claim %r' % self.id
@@ -127,15 +130,23 @@ def index():
         tasks = Todo.query.order_by(Todo.date_created).all()
         return render_template('index.html', tasks= tasks)
 
-@app.route('/get_claims', methods= ['POST', 'GET'])
+@app.route('/claims', methods= ['POST', 'GET'])
 def claims():
     if request.method == 'GET':
         claims = Claim.query.all()
         return claims
     elif request.method == 'POST':
-        claims = request.form['content']
+        claims = request.json['claims']
+        print('***claims***')
+        print(claims)
+        for claim in claims:
+            new_claim = Claim(title=claim) 
+            db.session.add(new_claim)
+        db.session.commit()       
+        return {"success"}
+        # new_task = Claim(content = claims)
     # else:
-        return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
+    return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
     
     # if request.method == 'POST':
     #     task_content = request.form['content']
@@ -176,9 +187,9 @@ def update(id):
 
 if __name__ == "__main__":
     # app.run(debug=True) 
-    app.run(debug=False, host='0.0.0.0')
     with app.app_context():
         db.create_all()
+    app.run(debug=False, host='0.0.0.0')
     
 
 
