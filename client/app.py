@@ -132,8 +132,8 @@ def index():
 
 @app.route('/claims', methods= ['POST', 'GET'])
 def claims():
+    claims = Claim.query.all()
     if request.method == 'GET':
-        claims = Claim.query.all()
         return claims
     elif request.method == 'POST':
         claims = request.json['claims']
@@ -143,7 +143,7 @@ def claims():
             new_claim = Claim(title=claim) 
             db.session.add(new_claim)
         db.session.commit()       
-        return {"success"}
+        return claims
         # new_task = Claim(content = claims)
     # else:
     return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
