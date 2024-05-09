@@ -27,7 +27,7 @@ try:
 except:
     pass
 os.makedirs(save_dir, exist_ok=True)
- 
+
 
 def get_new_name():
     # Get the current date and time
