@@ -75,9 +75,10 @@ def serve():
 #################################################### Flask webapp
 
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
@@ -129,7 +130,13 @@ def index():
 def claims():
     claims = Claim.query.all()
     if request.method == 'GET':
-        return claims
+        claims_list = []
+        for claim in claims:
+            claims_list.append({
+                'id': claim.id,
+                'title': claim.title,
+            })
+        return jsonify(claims_list)
     elif request.method == 'POST':
         claims = request.json['claims']
         print('***claims***')
