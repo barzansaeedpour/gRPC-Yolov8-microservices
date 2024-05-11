@@ -44,7 +44,7 @@ def get_new_name():
 
 def stream_camera():
     detected_plates = {}
-    with grpc.insecure_channel("camera-service-server:50051") as channel:
+    with grpc.insecure_channel("camera-service-server:81") as channel:
         stub = camera_pb2_grpc.CameraStub(channel)
         # response = stub.StreamCamera(camera_pb2.CameraFrame())
         # print(response)
