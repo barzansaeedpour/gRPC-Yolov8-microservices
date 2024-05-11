@@ -3,10 +3,18 @@
 from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
+from dotenv import find_dotenv, load_dotenv
 
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+base_dir = os.getenv("base_dir_webapp")
 
+print(base_dir)
+
+# x = 1/0
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{base_dir}test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
 db = SQLAlchemy(app)
 
 class Status():
