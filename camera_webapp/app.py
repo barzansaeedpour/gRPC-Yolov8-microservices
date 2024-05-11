@@ -25,6 +25,8 @@ class Status():
         
     def error(self):
         return {"message":self.message, "statusCode": self.statusCode, "isSuccess": self.isSuccess}
+    def success(self):
+        return {"message":self.message, "statusCode": self.statusCode, "isSuccess": self.isSuccess}
 
 # class Todo(db.Model):
 #     id = db.Column(db.Integer, primary_key = True)
@@ -99,9 +101,10 @@ def cameras():
     if request.method == 'DELETE':
         cameras = request.json['cameras']
         for camera in cameras:
-            camera_to_delete = Camera(id=camera) 
+            camera_to_delete = Camera.query.get_or_404(camera) 
             db.session.delete(camera_to_delete)
-        db.session.commit() 
+        db.session.commit()
+        return Status(message='عملیات با موفقیت انجام شد', isSuccess=True, statusCode=200).success() 
     if request.method == 'GET':
         camera_list = []
         for camera in cameras:
