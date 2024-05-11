@@ -4,8 +4,8 @@ import time
 from concurrent import futures
 import camera_pb2
 import camera_pb2_grpc
-import auth_pb2
-import auth_pb2_grpc
+import claims_pb2
+import claims_pb2_grpc
 from datetime import datetime
 import shutil
 import os
@@ -58,19 +58,19 @@ class CameraServicer(camera_pb2_grpc.CameraServicer):
         finally:
             cap.release()
             
-class AuthServicer(auth_pb2_grpc.AuthServicer):
-    def GetClaims(self, request_iterator, context):
-        claims = [
-            auth_pb2.Claim(title="add_cameraaaa"),
-            auth_pb2.Claim(title="remove_cameraaaa"),
-        ]
-        print("claims")
-        return auth_pb2.GetClaimsResponse(claims=claims)
+
+class Claims(claims_pb2_grpc.ClaimsServicer):
+    def GetClaims(self, request, context):
+        return claims_pb2.GetClaimsResponse(claims=[
+            claims_pb2.Claim(
+                title='add camera',
+            )
+        ])
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     # camera_pb2_grpc.add_CameraServicer_to_server(CameraServicer(), server)
-    auth_pb2_grpc.add_AuthServicer_to_server(AuthServicer, server)
+    claims_pb2_grpc.add_ClaimsServicer_to_server(Claims(), server)
     # server.add_insecure_port('[::]:50051')
     server.add_insecure_port('0.0.0.0:81')
     # server.add_insecure_port('127.0.0.1:50051')
