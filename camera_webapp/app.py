@@ -8,7 +8,7 @@ from dotenv import find_dotenv, load_dotenv
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
-base_dir = os.getenv("base_dir_webapp")
+base_dir = os.getenv("base_dir_camera_webapp")
 
 print(base_dir)
 
@@ -45,6 +45,9 @@ class Claim(db.Model):
 class Camera(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(200), nullable = False)
+    ip = db.Column(db.String(200), nullable = True)
+    port = db.Column(db.String(200), nullable = True)
+    connection_string = db.Column(db.String(200), nullable = False)
     
     def __repr__(self):
         return '<Claim %r' % self.id
@@ -89,6 +92,31 @@ def claims():
         # new_task = Claim(content = claims)
     # else:
     return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
+
+@app.route('/cameras', methods= ['POST', 'GET'])
+def cameras():
+    cameras = Camera.query.all()
+    if request.method == 'GET':
+        camera_list = []
+        for camera in cameras:
+            camera_list.append({
+                'id': camera.id,
+                'title': camera.title,
+                'ip': camera.ip,
+                'port': camera.port,
+                'connection_string': camera.connection_string,
+            })
+        return jsonify(camera_list)
+    
+    elif request.method == 'POST':
+        cameras = request.json['cameras']
+        for camera in cameras:
+            new_camera = Camera(title=camera['title'], ip=camera['ip'], port= camera["port"], connection_string=camera["connection_string"]) 
+            db.session.add(new_camera)
+        db.session.commit()       
+        return cameras
+        
+    return Status(message='خطا در گرفتن لیست دوربین ها', isSuccess=False, statusCode=400).error()
     
     # if request.method == 'POST':
     #     task_content = request.form['content']
@@ -131,5 +159,5 @@ if __name__ == "__main__":
     # app.run(debug=True) 
     with app.app_context():
         db.create_all()
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
     
