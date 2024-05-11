@@ -2,11 +2,13 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import auth_pb2 as auth__pb2
+import claims_pb2 as claims__pb2
 
 
-class AuthStub(object):
-    """Missing associated documentation comment in .proto file."""
+class ClaimsStub(object):
+    """The greeting service definition.
+
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -14,39 +16,44 @@ class AuthStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetClaims = channel.unary_stream(
-                '/Auth/GetClaims',
-                request_serializer=auth__pb2.GetClaimsRequest.SerializeToString,
-                response_deserializer=auth__pb2.GetClaimsResponse.FromString,
+        self.GetClaims = channel.unary_unary(
+                '/claims.Claims/GetClaims',
+                request_serializer=claims__pb2.GetClaimsRequest.SerializeToString,
+                response_deserializer=claims__pb2.GetClaimsResponse.FromString,
                 )
 
 
-class AuthServicer(object):
-    """Missing associated documentation comment in .proto file."""
+class ClaimsServicer(object):
+    """The greeting service definition.
+
+    """
 
     def GetClaims(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Sends a greeting
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_AuthServicer_to_server(servicer, server):
+def add_ClaimsServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetClaims': grpc.unary_stream_rpc_method_handler(
+            'GetClaims': grpc.unary_unary_rpc_method_handler(
                     servicer.GetClaims,
-                    request_deserializer=auth__pb2.GetClaimsRequest.FromString,
-                    response_serializer=auth__pb2.GetClaimsResponse.SerializeToString,
+                    request_deserializer=claims__pb2.GetClaimsRequest.FromString,
+                    response_serializer=claims__pb2.GetClaimsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Auth', rpc_method_handlers)
+            'claims.Claims', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class Auth(object):
-    """Missing associated documentation comment in .proto file."""
+class Claims(object):
+    """The greeting service definition.
+
+    """
 
     @staticmethod
     def GetClaims(request,
@@ -59,8 +66,8 @@ class Auth(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/Auth/GetClaims',
-            auth__pb2.GetClaimsRequest.SerializeToString,
-            auth__pb2.GetClaimsResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/claims.Claims/GetClaims',
+            claims__pb2.GetClaimsRequest.SerializeToString,
+            claims__pb2.GetClaimsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
