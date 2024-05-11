@@ -87,15 +87,21 @@ def claims():
         for claim in claims:
             new_claim = Claim(title=claim) 
             db.session.add(new_claim)
-        db.session.commit()       
+        db.session.commit()      
         return claims
         # new_task = Claim(content = claims)
     # else:
     return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
 
-@app.route('/cameras', methods= ['POST', 'GET'])
+@app.route('/cameras', methods= ['POST', 'GET', 'DELETE'])
 def cameras():
     cameras = Camera.query.all()
+    if request.method == 'DELETE':
+        cameras = request.json['cameras']
+        for camera in cameras:
+            camera_to_delete = Camera(id=camera) 
+            db.session.delete(camera_to_delete)
+        db.session.commit() 
     if request.method == 'GET':
         camera_list = []
         for camera in cameras:
@@ -117,6 +123,16 @@ def cameras():
         return cameras
         
     return Status(message='خطا در گرفتن لیست دوربین ها', isSuccess=False, statusCode=400).error()
+
+# @app.route('/delete_camera/<int:id>', methods=['DELETE'])
+# def delete_camera(id):
+#     camera_to_delete = Camera.query.get_or_404(id)
+#     try:
+#         db.session.delete(camera_to_delete)
+#         db.session.commit()
+#         return redirect('/cameras')
+#     except:
+#         return Status(message='خطا در حذف دوربین', isSuccess=False, statusCode=400).error()
     
     # if request.method == 'POST':
     #     task_content = request.form['content']
