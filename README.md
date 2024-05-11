@@ -10,3 +10,9 @@
 
     - YOLOv8 (detection)
 
+
+
+## Run:
+
+- camera_webapp
+    - `python camera_webapp/app.py`
