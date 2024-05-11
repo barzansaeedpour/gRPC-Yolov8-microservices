@@ -60,10 +60,11 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     camera_pb2_grpc.add_CameraServicer_to_server(CameraServicer(), server)
     # server.add_insecure_port('[::]:50051')
-    server.add_insecure_port('0.0.0.0:50051')
+    server.add_insecure_port('0.0.0.0:81')
     # server.add_insecure_port('127.0.0.1:50051')
     server.start()
-    print("Server started on port 50051")
+    # print("Server started on port 50051")
+    print("Server started on port 81")
     try:
         while True:
             time.sleep(60 * 60 * 24)  # Keep server running
