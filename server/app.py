@@ -13,6 +13,13 @@ import pandas as pd
 from sqlalchemy import create_engine
 from dotenv import find_dotenv, load_dotenv
 
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+base_dir = os.getenv("base_dir_server")
+server_grpc_channel_address = os.getenv("server_grpc_channel_address")
+
+
+
 def get_new_name():
     # Get the current date and time
     current_datetime = datetime.now()
@@ -26,8 +33,8 @@ def get_new_name():
 class CameraServicer(camera_pb2_grpc.CameraServicer):
     def StreamCamera(self, request_iterator, context):
         # Initialize camera (replace with your actual camera setup)
-        video_path = '/code/files/video_test.mp4'
-        saved_images = '/code/saved_images/'
+        video_path = f'{base_dir}/files/video_test.mp4'
+        saved_images = f'{base_dir}/saved_images/'
         try:
             shutil.rmtree(saved_images)
         except:
@@ -68,9 +75,9 @@ class Claims(claims_pb2_grpc.ClaimsServicer):
         dotenv_path = find_dotenv()
         load_dotenv(dotenv_path)
         base_dir = os.getenv("base_dir_camera_webapp")
-        db_engine = create_engine(f'sqlite:///{base_dir}test.db')
+        db_engine = create_engine(f'sqlite:///{base_dir}/test.db')
         
-        table_name = 'claim'  # Replace with your actual table name
+        table_name = 'claim' 
         df = pd.read_sql_table(table_name, db_engine)
         claims_from_db = list(df.title)
         print(claims_from_db)
@@ -87,7 +94,7 @@ def serve():
     # camera_pb2_grpc.add_CameraServicer_to_server(CameraServicer(), server)
     claims_pb2_grpc.add_ClaimsServicer_to_server(Claims(), server)
     # server.add_insecure_port('[::]:50051')
-    server.add_insecure_port('0.0.0.0:81')
+    server.add_insecure_port(server_grpc_channel_address)
     # server.add_insecure_port('127.0.0.1:50051')
     server.start()
     # print("Server started on port 50051")
