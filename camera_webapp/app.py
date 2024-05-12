@@ -174,9 +174,27 @@ def cameras():
 #     else:
 #         return render_template('update.html', task= task_to_update)
 
+def fill_database():
+    old_claims = Claim.query.all()
+    old_claims = [c.title for c in old_claims]
+    print(old_claims)
+    new_claims = [
+    "camera_webapp/camera/post",
+    "camera_webapp/camera/get",
+    "camera_webapp/camera/delete",
+    "camera_webapp/camera/update"
+    ]
+    
+    for claim in new_claims:
+        if claim not in old_claims:
+            new_claim = Claim(title=claim) 
+            db.session.add(new_claim)
+    db.session.commit()      
+
 if __name__ == "__main__":
     # app.run(debug=True) 
     with app.app_context():
         db.create_all()
+        fill_database()
     app.run(debug=True, host='0.0.0.0')
     
