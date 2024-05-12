@@ -9,6 +9,9 @@ import claims_pb2_grpc
 from datetime import datetime
 import shutil
 import os
+import pandas as pd
+from sqlalchemy import create_engine
+from dotenv import find_dotenv, load_dotenv
 
 def get_new_name():
     # Get the current date and time
@@ -61,11 +64,23 @@ class CameraServicer(camera_pb2_grpc.CameraServicer):
 
 class Claims(claims_pb2_grpc.ClaimsServicer):
     def GetClaims(self, request, context):
-        return claims_pb2.GetClaimsResponse(claims=[
-            claims_pb2.Claim(
-                title='add camera',
-            )
-        ])
+        
+        dotenv_path = find_dotenv()
+        load_dotenv(dotenv_path)
+        base_dir = os.getenv("base_dir_camera_webapp")
+        db_engine = create_engine(f'sqlite:///{base_dir}test.db')
+        
+        table_name = 'claim'  # Replace with your actual table name
+        df = pd.read_sql_table(table_name, db_engine)
+        claims_from_db = list(df.title)
+        print(claims_from_db)
+
+        claims = []
+        for claim in claims_from_db:
+            claims.append(claims_pb2.Claim(
+                title=claim,
+            ))
+        return claims_pb2.GetClaimsResponse(claims=claims)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
