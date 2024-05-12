@@ -5,6 +5,7 @@ import camera_pb2_grpc
 import numpy as np
 from datetime import datetime
 import os
+from dotenv import find_dotenv, load_dotenv
 import json
 from my_yolo_v8.yolov8 import plate_detection
 from my_yolo_v8.rabbitmq.publisher import publish
@@ -14,11 +15,14 @@ from my_yolo_v8.rabbitmq.publisher import publish
 # from flask_cors import CORS
 ######################################
 
-base_dir = ''
 
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+base_dir = os.getenv("base_dir_client")
+client_grpc_channel_address = os.getenv("client_grpc_channel_address")
 
-save_dir = '/code/saved_images/'
-plate_detection_output_path = "/code/my_yolo_v8/outputs/"
+save_dir = f'{base_dir}/saved_images/'
+plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
 
 
 import shutil
@@ -44,7 +48,7 @@ def get_new_name():
 
 def stream_camera():
     detected_plates = {}
-    with grpc.insecure_channel("camera-service-server:81") as channel:
+    with grpc.insecure_channel(client_grpc_channel_address) as channel:
         stub = camera_pb2_grpc.CameraStub(channel)
         # response = stub.StreamCamera(camera_pb2.CameraFrame())
         # print(response)

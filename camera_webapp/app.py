@@ -14,7 +14,7 @@ print(base_dir)
 
 # x = 1/0
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{base_dir}test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{base_dir}/test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
 db = SQLAlchemy(app)
 
 class Status():
