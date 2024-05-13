@@ -6,7 +6,7 @@ services:
       environment:
         POSTGRES_PASSWORD: mysecretpassword
       volumes:
-        - D:/gRPC-Yolov8-microservices/postgres-data:var/lib/postgresql/data
+        - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
       ports:
         - "5432:5432"
     pgadmin:
