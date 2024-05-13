@@ -20,6 +20,26 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{base_dir}/test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
 db = SQLAlchemy(app)
 
+####################################
+def fill_database():
+    old_claims = Claim.query.all()
+    old_claims = [c.title for c in old_claims]
+    print(old_claims)
+    new_claims = [
+    "camera_webapp/camera/post",
+    "camera_webapp/camera/get",
+    "camera_webapp/camera/delete",
+    "camera_webapp/camera/update"
+    ]
+    
+    for claim in new_claims:
+        if claim not in old_claims:
+            new_claim = Claim(title=claim) 
+            db.session.add(new_claim)
+    db.session.commit()      
+####################################
+
+
 class Status():
     def __init__(self, message, statusCode, isSuccess) -> None:
         self.message = message
@@ -177,22 +197,6 @@ def cameras():
 #     else:
 #         return render_template('update.html', task= task_to_update)
 
-def fill_database():
-    old_claims = Claim.query.all()
-    old_claims = [c.title for c in old_claims]
-    print(old_claims)
-    new_claims = [
-    "camera_webapp/camera/post",
-    "camera_webapp/camera/get",
-    "camera_webapp/camera/delete",
-    "camera_webapp/camera/update"
-    ]
-    
-    for claim in new_claims:
-        if claim not in old_claims:
-            new_claim = Claim(title=claim) 
-            db.session.add(new_claim)
-    db.session.commit()      
 
 if __name__ == "__main__":
     print("main")
