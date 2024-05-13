@@ -5,10 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 from dotenv import find_dotenv, load_dotenv
+import psycopg2
+
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 base_dir = os.getenv("base_dir_camera_webapp")
+debug = os.getenv("debug")
 
 print(base_dir)
 
@@ -192,9 +195,10 @@ def fill_database():
     db.session.commit()      
 
 if __name__ == "__main__":
+    print("main")
     # app.run(debug=True) 
     with app.app_context():
         db.create_all()
         fill_database()
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=debug, host='0.0.0.0')
     
