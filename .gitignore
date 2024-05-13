@@ -11,4 +11,5 @@ web_app/env
 client/video_test.mp4
 client/.vscode/launch.json
 camera_webapp/env
+postgres-data/
 .env
