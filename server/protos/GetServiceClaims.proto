@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "Auth.Api";
+
+package AuthorizeService;
+
+service GetClaims {
+  rpc GetClaimsList (EmptyRequest) returns (GetClaimListReply);
+
+}
+message EmptyRequest {
+}
+
+message GetClaimListReply{
+  repeated string items = 1;
+}
