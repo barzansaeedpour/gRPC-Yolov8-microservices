@@ -12,12 +12,15 @@ dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 base_dir = os.getenv("base_dir_camera_webapp")
 debug = os.getenv("debug")
+postgresql_user = 'postgres'
+postgresql_password = 'mysecretpassword'
 
 print(base_dir)
 
 # x = 1/0
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{base_dir}/test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{base_dir}/test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{postgresql_user}:{postgresql_password}@localhost'
 db = SQLAlchemy(app)
 
 ####################################
