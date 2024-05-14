@@ -75,7 +75,8 @@ class Claims(claims_pb2_grpc.ClaimsServicer):
         dotenv_path = find_dotenv()
         load_dotenv(dotenv_path)
         base_dir = os.getenv("base_dir_camera_webapp")
-        db_engine = create_engine(f'sqlite:///{base_dir}/test.db')
+        # db_engine = create_engine(f'sqlite:///{base_dir}/test.db')
+        db_engine = create_engine(f'postgresql://postgres:mysecretpassword@localhost')
         
         table_name = 'claim' 
         df = pd.read_sql_table(table_name, db_engine)
