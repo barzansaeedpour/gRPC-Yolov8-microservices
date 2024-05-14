@@ -121,6 +121,7 @@ def claims():
     # else:
     return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
 
+
 @app.route('/cameras', methods= ['POST', 'GET', 'DELETE'])
 def cameras():
     cameras = Camera.query.all()
