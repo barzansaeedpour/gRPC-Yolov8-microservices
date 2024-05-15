@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option csharp_namespace = "Auth.Api";
+
+package AuthService;
+
+service AuthService {
+  rpc GetUser (AuthTokenRequest) returns (GetUserReply);
+  rpc ValidToken (AuthTokenRequest) returns (ValidTokenReply);
+  rpc GetClaims (AuthTokenRequest) returns (ClaimArrayReply);
+  rpc IsAuthorize (IsAuthorizeRequest) returns (IsAuthorizeReply);
+  rpc IsAuthorizedToken (IsAuthorizedTokenRequest) returns (IsAuthorizedTokenReply);
+
+}
+
+message AuthTokenRequest {
+  string JwtToken = 1;
+}
+
+message GetUserReply {
+  string FirstName = 1;
+  string LastName = 2;
+  string UserName = 3;
+}
+message ValidTokenReply {
+  bool  IsOkay = 1;
+}
+message ClaimModel {
+  string type = 1;
+  string value = 2;
+}
+
+message ClaimArrayReply {
+  repeated ClaimModel Claims = 1;
+}
+message IsAuthorizeRequest {
+  string UserId = 1;
+  string Claim = 2;
+}
+
+message IsAuthorizeReply{
+  bool Authorized = 1;
+}
+
+message IsAuthorizedTokenReply{
+  bool Authorized = 1;
+}
+message IsAuthorizedTokenRequest{
+  string Token = 1;
+  string Claim = 2;
+}
