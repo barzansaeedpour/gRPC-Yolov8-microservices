@@ -126,7 +126,7 @@ def claims():
     return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
 
 
-@app.route('/cameras', methods= ['POST', 'GET', 'DELETE', 'UPDATE'])
+@app.route('/cameras', methods= ['POST', 'GET', 'DELETE', 'PUT'])
 def cameras():
     token = request.authorization.token
     
@@ -170,10 +170,10 @@ def cameras():
         else:
             return Status(message='خطا در توکن یا عدم سطح دسترسی', isSuccess=False, statusCode=400).error()
     
-    elif request.method == 'UPDATE':
+    elif request.method == 'PUT':
         bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/update')
         if bool:
-            camera = request.json['cameras']
+            camera = request.json
             camera_to_update = Camera.query.get_or_404(camera["id"])
             camera_to_update.title = camera['title']
             camera_to_update.port = camera['port']
@@ -182,7 +182,7 @@ def cameras():
             #     new_camera = Camera(title=camera['title'], ip=camera['ip'], port= camera["port"], connection_string=camera["connection_string"]) 
             #     db.session.add(new_camera)
             db.session.commit()
-            return cameras
+            return camera
         else:
             return Status(message='خطا در توکن یا عدم سطح دسترسی', isSuccess=False, statusCode=400).error()
             
