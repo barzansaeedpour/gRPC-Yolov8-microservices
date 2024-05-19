@@ -132,12 +132,16 @@ def cameras():
     
     cameras = Camera.query.all()
     if request.method == 'DELETE':
-        cameras = request.json['cameras']
-        for camera in cameras:
-            camera_to_delete = Camera.query.get_or_404(camera) 
-            db.session.delete(camera_to_delete)
-        db.session.commit()
-        return Status(message='عملیات با موفقیت انجام شد', isSuccess=True, statusCode=200).success() 
+        bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/delete')
+        if bool:
+            cameras = request.json['cameras']
+            for camera in cameras:
+                camera_to_delete = Camera.query.get_or_404(camera) 
+                db.session.delete(camera_to_delete)
+            db.session.commit()
+            return Status(message='عملیات با موفقیت انجام شد', isSuccess=True, statusCode=200).success() 
+        else:
+            return Status(message='خطا در توکن یا عدم سطح دسترسی', isSuccess=False, statusCode=400).error()
     if request.method == 'GET':
         bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/get')
         if bool:
@@ -155,13 +159,17 @@ def cameras():
             return Status(message='خطا در توکن یا عدم سطح دسترسی', isSuccess=False, statusCode=400).error()
         
     elif request.method == 'POST':
-        cameras = request.json['cameras']
-        for camera in cameras:
-            new_camera = Camera(title=camera['title'], ip=camera['ip'], port= camera["port"], connection_string=camera["connection_string"]) 
-            db.session.add(new_camera)
-        db.session.commit()       
-        return cameras
-        
+        bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/post')
+        if bool:
+            cameras = request.json['cameras']
+            for camera in cameras:
+                new_camera = Camera(title=camera['title'], ip=camera['ip'], port= camera["port"], connection_string=camera["connection_string"]) 
+                db.session.add(new_camera)
+            db.session.commit()
+            return cameras
+        else:
+            return Status(message='خطا در توکن یا عدم سطح دسترسی', isSuccess=False, statusCode=400).error()
+            
     return Status(message='خطا در گرفتن لیست دوربین ها', isSuccess=False, statusCode=400).error()
 
 # @app.route('/delete_camera/<int:id>', methods=['DELETE'])
