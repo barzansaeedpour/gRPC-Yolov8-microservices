@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 from dotenv import find_dotenv, load_dotenv
 import psycopg2
+from token_claim_validation import token_claim_validation
 
 
 dotenv_path = find_dotenv()
@@ -81,6 +82,9 @@ class Camera(db.Model):
         return '<Claim %r' % self.id
 
 
+
+
+
 @app.route('/', methods= ['POST', 'GET'])
 def index():
     return "Okay"
@@ -124,6 +128,8 @@ def claims():
 
 @app.route('/cameras', methods= ['POST', 'GET', 'DELETE'])
 def cameras():
+    token = request.authorization.token
+    
     cameras = Camera.query.all()
     if request.method == 'DELETE':
         cameras = request.json['cameras']
@@ -133,17 +139,21 @@ def cameras():
         db.session.commit()
         return Status(message='عملیات با موفقیت انجام شد', isSuccess=True, statusCode=200).success() 
     if request.method == 'GET':
-        camera_list = []
-        for camera in cameras:
-            camera_list.append({
-                'id': camera.id,
-                'title': camera.title,
-                'ip': camera.ip,
-                'port': camera.port,
-                'connection_string': camera.connection_string,
-            })
-        return jsonify(camera_list)
-    
+        bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/get')
+        if bool:
+            camera_list = []
+            for camera in cameras:
+                camera_list.append({
+                    'id': camera.id,
+                    'title': camera.title,
+                    'ip': camera.ip,
+                    'port': camera.port,
+                    'connection_string': camera.connection_string,
+                })
+            return jsonify(camera_list)
+        else:
+            return Status(message='خطا در توکن یا عدم سطح دسترسی', isSuccess=False, statusCode=400).error()
+        
     elif request.method == 'POST':
         cameras = request.json['cameras']
         for camera in cameras:
