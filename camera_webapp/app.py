@@ -173,10 +173,14 @@ def cameras():
     elif request.method == 'UPDATE':
         bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/update')
         if bool:
-            cameras = request.json['cameras']
-            for camera in cameras:
-                new_camera = Camera(title=camera['title'], ip=camera['ip'], port= camera["port"], connection_string=camera["connection_string"]) 
-                db.session.add(new_camera)
+            camera = request.json['cameras']
+            camera_to_update = Camera.query.get_or_404(camera["id"])
+            camera_to_update.title = camera['title']
+            camera_to_update.port = camera['port']
+            camera_to_update.connection_string = camera['connection_string']
+            # for camera in cameras:
+            #     new_camera = Camera(title=camera['title'], ip=camera['ip'], port= camera["port"], connection_string=camera["connection_string"]) 
+            #     db.session.add(new_camera)
             db.session.commit()
             return cameras
         else:
