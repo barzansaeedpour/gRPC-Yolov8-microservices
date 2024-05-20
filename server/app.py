@@ -92,7 +92,7 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    # camera_pb2_grpc.add_CameraServicer_to_server(CameraServicer(), server)
+    camera_pb2_grpc.add_CameraServicer_to_server(CameraServicer(), server)
     GetServiceClaims_pb2_grpc.add_GetClaimsServicer_to_server(GetServiceClaims(), server)
     # server.add_insecure_port('[::]:50051')
     server.add_insecure_port(server_grpc_channel_address)
