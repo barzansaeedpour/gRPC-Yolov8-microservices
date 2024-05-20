@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import UniqueConstraint
 from datetime import datetime
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -68,6 +69,9 @@ class Claim(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(200), nullable = False)
     
+     # Define a unique constraint on the 'title' column
+    __table_args__ = (UniqueConstraint('title'),)
+    
     def __repr__(self):
         return '<Claim %r' % self.id
     
@@ -101,10 +105,20 @@ def index():
     #     tasks = Todo.query.order_by(Todo.date_created).all()
     #     return render_template('index.html', tasks= tasks)
 
-@app.route('/claims', methods= ['POST', 'GET'])
+@app.route('/claims', methods= ['POST', 'GET', 'DELETE'])
 def claims():
     claims = Claim.query.all()
-    if request.method == 'GET':
+    if request.method == 'DELETE':
+        # bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/delete')
+        # if True:
+        claims_to_delete = request.json['claims']
+        for claim in claims:
+            for claim_to_delete in claims_to_delete:
+                if claim.title == claim_to_delete:
+                    db.session.delete(claim)
+        db.session.commit()
+        return Status(message='عملیات با موفقیت انجام شد', isSuccess=True, statusCode=200).success() 
+    elif request.method == 'GET':
         claims_list = []
         for claim in claims:
             claims_list.append({
@@ -117,8 +131,9 @@ def claims():
         print('***claims***')
         print(claims)
         for claim in claims:
-            new_claim = Claim(title=claim) 
-            db.session.add(new_claim)
+            if not claim in claims:
+                new_claim = Claim(title=claim) 
+                db.session.add(new_claim)
         db.session.commit()      
         return claims
         # new_task = Claim(content = claims)
