@@ -127,15 +127,15 @@ def claims():
             })
         return jsonify(claims_list)
     elif request.method == 'POST':
-        claims = request.json['claims']
+        claims_to_add = request.json['claims']
         print('***claims***')
         print(claims)
-        for claim in claims:
-            if not claim in claims:
+        for claim in claims_to_add:
+            if not claim in [c.title for c in claims]:
                 new_claim = Claim(title=claim) 
                 db.session.add(new_claim)
         db.session.commit()      
-        return claims
+        return Status(message='عملیات با موفقیت انجام شد', isSuccess=True, statusCode=200).success() 
         # new_task = Claim(content = claims)
     # else:
     return Status(message='خطا در گرفتن سطوح دسترسی', isSuccess=False, statusCode=400).error()
