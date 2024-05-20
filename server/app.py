@@ -4,6 +4,8 @@ import time
 from concurrent import futures
 import camera_pb2
 import camera_pb2_grpc
+import Camera_pb2
+import Camera_pb2_grpc
 import GetServiceClaims_pb2
 import GetServiceClaims_pb2_grpc
 from datetime import datetime
