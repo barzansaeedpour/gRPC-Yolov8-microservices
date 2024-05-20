@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package CameraService;
+
+// Request message for streaming images
+message ImageStreamRequest {
+    string connection_string = 1;
+   string UserName =2;
+   string Password=3;
+    int32 FramePerSecond = 4;
+    
+}
+
+// Response message containing a single image
+message ImageResponse {
+    bytes ImageData = 1;
+}
+
+// Define the service
+service Camera {
+    rpc StreamImages (ImageStreamRequest) returns (stream ImageResponse);
+}
