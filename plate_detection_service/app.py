@@ -2,8 +2,8 @@ import grpc
 import cv2
 import time
 from concurrent import futures
-import camera_pb2
-import camera_pb2_grpc
+# import camera_pb2
+# import camera_pb2_grpc
 # import Camera_pb2
 # import Camera_pb2_grpc
 # import PlateDetection_pb2
@@ -99,7 +99,7 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
             claims.append(claim)
         return GetServiceClaims_pb2.GetClaimListReply(items=claims)
 
-class ReadPlateClass(ReadPlate_pb2_grpc.ReadPlateServicer):
+class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
         for i in range(10):
             time.sleep(1)
@@ -109,7 +109,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     # PlateDetection_pb2_grpc.add_PlateDetectionServicer_to_server(CameraServicer(), server)
     # GetServiceClaims_pb2_grpc.add_GetClaimsServicer_to_server(GetServiceClaims(), server)
-    ReadPlate_pb2_grpc.add_ReadPlateServicer_to_server(ReadPlateClass(), server)
+    ReadPlate_pb2_grpc.add_ReadPlateServicer_to_server(ReadPlate(), server)
     # server.add_insecure_port('[::]:50051')
     server.add_insecure_port(server_grpc_channel_address)
     # server.add_insecure_port('127.0.0.1:50051')
