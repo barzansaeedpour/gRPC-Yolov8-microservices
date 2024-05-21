@@ -2,6 +2,7 @@ import grpc
 import cv2
 import time
 from concurrent import futures
+from stream_camera_from_back_service import stream_camera_from_back_service
 # import camera_pb2
 # import camera_pb2_grpc
 # import Camera_pb2
@@ -101,6 +102,8 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
+        x = stream_camera_from_back_service()
+        print(x)
         for i in range(10):
             time.sleep(1)
             yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
