@@ -1,4 +1,5 @@
 */env
+/plate_detection_service/my_yolo_v8/outputs/
 /client/env
 /server/env
 client/__pycache__

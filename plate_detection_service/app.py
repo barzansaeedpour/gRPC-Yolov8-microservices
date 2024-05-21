@@ -20,8 +20,12 @@ import shutil
 import os
 import numpy as np
 import pandas as pd
+import json
 from sqlalchemy import create_engine
 from dotenv import find_dotenv, load_dotenv
+from my_yolo_v8.yolov8 import plate_detection
+from my_yolo_v8.rabbitmq.publisher import publish
+
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
@@ -31,7 +35,19 @@ postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
 client_grpc_channel_address = os.getenv("client_grpc_channel_address")
 save_dir = f'{base_dir}/saved_images/'
-plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
+# plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
+plate_detection_output_path = f"{base_dir}/detected_plates"
+
+try:
+    shutil.rmtree(save_dir)
+except:
+    pass
+os.makedirs(save_dir, exist_ok=True)
+try:
+    shutil.rmtree(plate_detection_output_path)
+except:
+    pass
+os.makedirs(plate_detection_output_path, exist_ok=True)
 
 
 def get_new_name():
@@ -108,6 +124,7 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
+        detected_plates = {}
         with grpc.insecure_channel(client_grpc_channel_address) as channel:
             stub = Camera_pb2_grpc.CameraStub(channel)
             try:
@@ -119,7 +136,23 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     base64_frame = response.ImageData
                     nparr = np.frombuffer(base64_frame, np.uint8)
                     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                    # new_name = get_new_name()
+                    # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
+                    detected_plate = plate_detection(frame)
+                    if detected_plate:
+                        if detected_plate in detected_plates.keys():
+                            detected_plates[detected_plate] +=1
+                            with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
+                                # file.write(f"{str(detected_plates)}\n")
+                                json.dump(detected_plates, file)
+                            if detected_plates[detected_plate] > 5:
+                                publish(plate= detected_plate)
+                                print(200*'*')
+
+                        else:
+                            detected_plates[detected_plate] = 1
                     new_name = get_new_name()
+                    # print(new_name)
                     b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
 
             except KeyboardInterrupt:
