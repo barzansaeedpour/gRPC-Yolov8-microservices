@@ -56,7 +56,7 @@ def stream_camera_from_back_service():
                 frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                 new_name = get_new_name()
                 b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
-                yield frame
+                return frame
 
         except KeyboardInterrupt:
             return None

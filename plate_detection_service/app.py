@@ -13,19 +13,25 @@ import ReadPlate_pb2
 import ReadPlate_pb2_grpc
 import GetServiceClaims_pb2
 import GetServiceClaims_pb2_grpc
+import Camera_pb2
+import Camera_pb2_grpc
 from datetime import datetime
 import shutil
 import os
+import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 from dotenv import find_dotenv, load_dotenv
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
-base_dir = os.getenv("base_dir_server")
+base_dir = os.getenv("base_dir_plate_detection")
 server_grpc_channel_address = os.getenv("server_grpc_channel_address")
 postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
+client_grpc_channel_address = os.getenv("client_grpc_channel_address")
+save_dir = f'{base_dir}/saved_images/'
+plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
 
 
 def get_new_name():
@@ -102,11 +108,29 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
-        x = stream_camera_from_back_service()
-        print(x)
-        for i in range(10):
-            time.sleep(1)
-            yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
+        with grpc.insecure_channel(client_grpc_channel_address) as channel:
+            stub = Camera_pb2_grpc.CameraStub(channel)
+            try:
+                for response in stub.StreamImages(Camera_pb2.ImageStreamRequest(connection_string="rtsp://192.168.100.7/onvif1",
+                                                                                FramePerSecond=2,
+                                                                                Password="admin",
+                                                                                UserName="admin"
+                                                                                )):
+                    base64_frame = response.ImageData
+                    nparr = np.frombuffer(base64_frame, np.uint8)
+                    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                    new_name = get_new_name()
+                    b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
+
+            except KeyboardInterrupt:
+                pass
+            finally:
+                cv2.destroyAllWindows()
+        # x = stream_camera_from_back_service()
+        # print(x)
+        # for i in range(10):
+        #     time.sleep(1)
+        #     yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
