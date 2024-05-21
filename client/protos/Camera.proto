@@ -8,7 +8,6 @@ message ImageStreamRequest {
    string UserName =2;
    string Password=3;
     int32 FramePerSecond = 4;
-    
 }
 
 // Response message containing a single image

@@ -6,8 +6,8 @@ import camera_pb2
 import camera_pb2_grpc
 # import Camera_pb2
 # import Camera_pb2_grpc
-import PlateDetection_pb2
-import PlateDetection_pb2_grpc
+# import PlateDetection_pb2
+# import PlateDetection_pb2_grpc
 import GetServiceClaims_pb2
 import GetServiceClaims_pb2_grpc
 from datetime import datetime
@@ -21,7 +21,8 @@ dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 base_dir = os.getenv("base_dir_server")
 server_grpc_channel_address = os.getenv("server_grpc_channel_address")
-
+postgresql_user = os.getenv('postgresql_user')
+postgresql_password = os.getenv("postgresql_password")
 
 
 def get_new_name():
@@ -80,7 +81,8 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
         dotenv_path = find_dotenv()
         load_dotenv(dotenv_path)
         base_dir = os.getenv("base_dir_camera_webapp")
-        db_engine = create_engine(f'sqlite:///{base_dir}/test.db')
+        # db_engine = create_engine(f'sqlite:///{base_dir}/test.db')
+        db_engine = create_engine(f'postgresql://{postgresql_user}:{postgresql_password}@localhost')
         
         table_name = 'claim' 
         df = pd.read_sql_table(table_name, db_engine)
@@ -97,7 +99,7 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    PlateDetection_pb2_grpc.add_PlateDetectionServicer_to_server(CameraServicer(), server)
+    # PlateDetection_pb2_grpc.add_PlateDetectionServicer_to_server(CameraServicer(), server)
     GetServiceClaims_pb2_grpc.add_GetClaimsServicer_to_server(GetServiceClaims(), server)
     # server.add_insecure_port('[::]:50051')
     server.add_insecure_port(server_grpc_channel_address)

@@ -30,6 +30,7 @@ def fill_database():
     old_claims = Claim.query.all()
     old_claims = [c.title for c in old_claims]
     print(old_claims)
+    
     new_claims = [
     "camera_webapp/camera/post",
     "camera_webapp/camera/get",
