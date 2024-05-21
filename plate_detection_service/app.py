@@ -8,6 +8,8 @@ import camera_pb2_grpc
 # import Camera_pb2_grpc
 # import PlateDetection_pb2
 # import PlateDetection_pb2_grpc
+import ReadPlate_pb2
+import ReadPlate_pb2_grpc
 import GetServiceClaims_pb2
 import GetServiceClaims_pb2_grpc
 from datetime import datetime
@@ -35,44 +37,44 @@ def get_new_name():
     # print(f"Unique filename: {filename}")
     return filename
 
-class CameraServicer(camera_pb2_grpc.CameraServicer):
-    def StreamCamera(self, request_iterator, context):
-        # Initialize camera (replace with your actual camera setup)
-        video_path = f'{base_dir}/files/video_test.mp4'
-        saved_images = f'{base_dir}/saved_images/'
-        try:
-            shutil.rmtree(saved_images)
-        except:
-            pass
-        os.makedirs(saved_images, exist_ok=True)
+# class CameraServicer(camera_pb2_grpc.CameraServicer):
+#     def StreamCamera(self, request_iterator, context):
+#         # Initialize camera (replace with your actual camera setup)
+#         video_path = f'{base_dir}/files/video_test.mp4'
+#         saved_images = f'{base_dir}/saved_images/'
+#         try:
+#             shutil.rmtree(saved_images)
+#         except:
+#             pass
+#         os.makedirs(saved_images, exist_ok=True)
         
-        # print(video_path)
+#         # print(video_path)
         
-        # cap = cv2.VideoCapture(0)
-        # cap = cv2.VideoCapture(video_path)
+#         # cap = cv2.VideoCapture(0)
+#         # cap = cv2.VideoCapture(video_path)
         
-        # try:
-        #     while True:
-        #         ret, frame = cap.read()
-        #         # print(ret)
+#         # try:
+#         #     while True:
+#         #         ret, frame = cap.read()
+#         #         # print(ret)
                 
-        #         # new_name = get_new_name()
-        #         # cv2.imwrite(f"{saved_images}{new_name}.png", frame)
+#         #         # new_name = get_new_name()
+#         #         # cv2.imwrite(f"{saved_images}{new_name}.png", frame)
                 
-        #         if not ret:
-        #             break
+#         #         if not ret:
+#         #             break
 
-        #         # Convert frame to bytes
-        #         # print(frame)
-        #         frame_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
+#         #         # Convert frame to bytes
+#         #         # print(frame)
+#         #         frame_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
 
-        #         # Yield the frame to the client
-        #         yield camera_pb2.CameraFrame(frame=frame_bytes)
+#         #         # Yield the frame to the client
+#         #         yield camera_pb2.CameraFrame(frame=frame_bytes)
 
-        #         # Simulate camera frame rate (adjust as needed)
-        #         time.sleep(0.1)
-        # finally:
-        #     cap.release()
+#         #         # Simulate camera frame rate (adjust as needed)
+#         #         time.sleep(0.1)
+#         # finally:
+#         #     cap.release()
             
 
 class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
@@ -97,10 +99,17 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
             claims.append(claim)
         return GetServiceClaims_pb2.GetClaimListReply(items=claims)
 
+class ReadPlateClass(ReadPlate_pb2_grpc.ReadPlateServicer):
+    def ReadPlates(self, request, context):
+        for i in range(10):
+            time.sleep(1)
+            yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
+
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     # PlateDetection_pb2_grpc.add_PlateDetectionServicer_to_server(CameraServicer(), server)
-    GetServiceClaims_pb2_grpc.add_GetClaimsServicer_to_server(GetServiceClaims(), server)
+    # GetServiceClaims_pb2_grpc.add_GetClaimsServicer_to_server(GetServiceClaims(), server)
+    ReadPlate_pb2_grpc.add_ReadPlateServicer_to_server(ReadPlateClass(), server)
     # server.add_insecure_port('[::]:50051')
     server.add_insecure_port(server_grpc_channel_address)
     # server.add_insecure_port('127.0.0.1:50051')
