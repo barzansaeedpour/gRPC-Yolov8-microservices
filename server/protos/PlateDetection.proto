@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+service PlateDetection {
+    rpc StreamCamera(CameraFrame) returns (stream CameraFrame);
+}
+
+message CameraFrame {
+    bytes frame = 1;
+}
+
+// python -m grpc_tools.protoc -I./protos --python_out=. --pyi_out=. --grpc_python_out=. ./protos/PlateDetection.proto
