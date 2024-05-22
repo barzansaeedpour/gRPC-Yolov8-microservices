@@ -36,7 +36,7 @@ postgresql_password = os.getenv("postgresql_password")
 client_grpc_channel_address = os.getenv("client_grpc_channel_address")
 save_dir = f'{base_dir}/saved_images/'
 # plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
-plate_detection_output_path = f"{base_dir}/detected_plates"
+plate_detection_output_path = f"{base_dir}/detected_plates/"
 
 try:
     shutil.rmtree(save_dir)
@@ -138,19 +138,18 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                     # new_name = get_new_name()
                     # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
-                    detected_plate = plate_detection(frame)
+                    detected_plate = plate_detection(frame, save_dir=plate_detection_output_path)
                     if detected_plate:
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate] +=1
-                            with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
-                                # file.write(f"{str(detected_plates)}\n")
-                                json.dump(detected_plates, file)
                             if detected_plates[detected_plate] > 5:
                                 publish(plate= detected_plate)
                                 print(200*'*')
-
                         else:
                             detected_plates[detected_plate] = 1
+                        with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
+                                # file.write(f"{str(detected_plates)}\n")
+                                json.dump(detected_plates, file)
                     new_name = get_new_name()
                     # print(new_name)
                     b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)

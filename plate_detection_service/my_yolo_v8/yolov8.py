@@ -15,12 +15,13 @@ from my_yolo_v8.utils.utils import extract_the_plate, check_detected_classes_val
 model_plate_detection = YOLO(f"./my_yolo_v8/models/plate-detector.pt")
 model_character_detection = YOLO(f"./my_yolo_v8/models/character-detector.pt")
 
-plate_detection_output_path = "/code/my_yolo_v8/outputs/"
-try:
-    shutil.rmtree(plate_detection_output_path)
-except:
-    pass
-os.makedirs(plate_detection_output_path, exist_ok=True)
+# plate_detection_output_path = "/code/my_yolo_v8/outputs/"
+# plate_detection_output_path = ""
+# try:
+#     shutil.rmtree(plate_detection_output_path)
+# except:
+#     pass
+# os.makedirs(plate_detection_output_path, exist_ok=True)
 
 plate_detection_path = './my_yolo_v8/outputs2/plate_detection_path/'
 character_detection_path = './my_yolo_v8/outputs2/character_detection_path/'
@@ -37,9 +38,9 @@ classNames2 = numbers + letters
 # classNames2 = list(model_character_detection.names.values())
 
 
-def plate_detection(frame):
+def plate_detection(frame, save_dir):
     img = frame
-    results = model_plate_detection.predict(source=img, conf = 0.1, save=False, show = False, project=plate_detection_output_path, name="", save_txt = False) 
+    results = model_plate_detection.predict(source=img, conf = 0.1, save=False, show = False, project=save_dir, name="", save_txt = False) 
     for r in results:
             boxes = r.boxes
 
@@ -54,7 +55,7 @@ def plate_detection(frame):
             continue
         new_name = get_new_name()
        
-        results2 = model_character_detection.predict(source=extracted_plate_image, conf = 0.1, save=False, show = False, project=plate_detection_output_path, name="", save_txt = False) 
+        results2 = model_character_detection.predict(source=extracted_plate_image, conf = 0.1, save=False, show = False, project=save_dir, name="", save_txt = False) 
         
     
         for r in results2:
@@ -62,7 +63,7 @@ def plate_detection(frame):
             detected_classes = [int(box.cls) for box in boxes]   
             
             detected_classes = [classNames2[i] for i in detected_classes]
-            continue_flag, detected_classes = check_detected_classes_validation(detected_classes, numbers, letters, plate_detection_output_path, boxes)
+            continue_flag, detected_classes = check_detected_classes_validation(detected_classes, numbers, letters, save_dir, boxes)
         if continue_flag:
             continue    
         img = Image.fromarray(extracted_plate_image)
@@ -96,7 +97,7 @@ def plate_detection(frame):
             img = np.array(img)
 
         img = np.array(img)
-        cv2.imwrite(plate_detection_output_path + new_name +'.png',img)
+        cv2.imwrite(save_dir + new_name +'.png',img)
         time.sleep(0.1)
         return detected_classes
         # cv2.imshow("Real-time Webcam", img)
