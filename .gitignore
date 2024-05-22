@@ -1,6 +1,9 @@
 */env
+<<<<<<< HEAD
 /plate_detection_service/my_yolo_v8/models/
 /plate_detection_service/my_yolo_v8/outputs/
+=======
+>>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
 /client/env
 /server/env
 client/__pycache__

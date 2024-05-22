@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 arabic-reshaper==3.0.0
 bidict==0.23.1
 blinker==1.7.0
@@ -8,10 +9,17 @@ colorama==0.4.6
 contourpy==1.2.1
 cycler==0.12.1
 filelock==3.14.0
+=======
+bidict==0.23.1
+blinker==1.7.0
+click==8.1.7
+colorama==0.4.6
+>>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
 Flask==2.2.5
 Flask-Cors==3.0.10
 Flask-SocketIO==5.2.0
 Flask-SQLAlchemy==3.1.1
+<<<<<<< HEAD
 fonttools==4.51.0
 fsspec==2024.5.0
 greenlet==3.0.3
@@ -28,11 +36,19 @@ matplotlib==3.9.0
 mkl==2021.4.0
 mpmath==1.3.0
 networkx==3.3
+=======
+grpcio==1.62.2
+grpcio-tools==1.62.2
+itsdangerous==2.1.2
+Jinja2==3.1.2
+MarkupSafe==2.1.1
+>>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
 numpy==1.26.4
 opencv-python==4.9.0.80
 packaging==23.2
 pandas==2.2.2
 pika==1.3.2
+<<<<<<< HEAD
 pillow==10.3.0
 protobuf==4.25.0
 psutil==5.9.8
@@ -40,11 +56,16 @@ psycopg2==2.9.9
 py-cpuinfo==9.0.0
 pyparsing==3.1.2
 python-bidi==0.4.2
+=======
+protobuf==4.25.0
+psycopg2==2.9.9
+>>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-engineio==4.3.2
 python-socketio==5.6.0
 pytz==2024.1
+<<<<<<< HEAD
 PyYAML==6.0.1
 requests==2.32.1
 scipy==1.13.0
@@ -65,3 +86,10 @@ ultralytics==8.2.2
 urllib3==2.2.1
 Werkzeug==2.2.2
 wsproto==1.2.0
+=======
+six==1.16.0
+SQLAlchemy==2.0.25
+typing_extensions==4.9.0
+tzdata==2024.1
+Werkzeug==2.2.2
+>>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
