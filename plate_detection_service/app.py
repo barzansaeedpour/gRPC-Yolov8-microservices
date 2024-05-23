@@ -160,7 +160,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     if detected_plate:
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate] +=1
-                            if detected_plates[detected_plate] > 5:
+                            if detected_plates[detected_plate] > 2:
                                 publish(plate= detected_plate)
                                 print(200*'*')
                         else:
