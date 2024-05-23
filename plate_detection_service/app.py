@@ -2,14 +2,12 @@ import grpc
 import cv2
 import time
 from concurrent import futures
-<<<<<<< HEAD
+
 from stream_camera_from_back_service import stream_camera_from_back_service
 # import camera_pb2
 # import camera_pb2_grpc
-=======
-import camera_pb2
-import camera_pb2_grpc
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
+# import camera_pb2
+# import camera_pb2_grpc
 # import Camera_pb2
 # import Camera_pb2_grpc
 # import PlateDetection_pb2
@@ -18,7 +16,6 @@ import ReadPlate_pb2
 import ReadPlate_pb2_grpc
 import GetServiceClaims_pb2
 import GetServiceClaims_pb2_grpc
-<<<<<<< HEAD
 import Camera_pb2
 import Camera_pb2_grpc
 from datetime import datetime
@@ -54,7 +51,7 @@ try:
 except:
     pass
 os.makedirs(plate_detection_output_path, exist_ok=True)
-=======
+
 from datetime import datetime
 import shutil
 import os
@@ -68,7 +65,7 @@ base_dir = os.getenv("base_dir_server")
 server_grpc_channel_address = os.getenv("server_grpc_channel_address")
 postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
+
 
 
 def get_new_name():
@@ -143,7 +140,6 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
             claims.append(claim)
         return GetServiceClaims_pb2.GetClaimListReply(items=claims)
 
-<<<<<<< HEAD
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
         detected_plates = {}
@@ -185,23 +181,22 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
         # for i in range(10):
         #     time.sleep(1)
         #     yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
-=======
-class ReadPlateClass(ReadPlate_pb2_grpc.ReadPlateServicer):
-    def ReadPlates(self, request, context):
-        for i in range(10):
-            time.sleep(1)
-            yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
+
+# class ReadPlateClass(ReadPlate_pb2_grpc.ReadPlateServicer):
+#     def ReadPlates(self, request, context):
+#         for i in range(10):
+#             time.sleep(1)
+#             yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     # PlateDetection_pb2_grpc.add_PlateDetectionServicer_to_server(CameraServicer(), server)
     # GetServiceClaims_pb2_grpc.add_GetClaimsServicer_to_server(GetServiceClaims(), server)
-<<<<<<< HEAD
+
     ReadPlate_pb2_grpc.add_ReadPlateServicer_to_server(ReadPlate(), server)
-=======
-    ReadPlate_pb2_grpc.add_ReadPlateServicer_to_server(ReadPlateClass(), server)
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
+
+    # ReadPlate_pb2_grpc.add_ReadPlateServicer_to_server(ReadPlateClass(), server)
+
     # server.add_insecure_port('[::]:50051')
     server.add_insecure_port(server_grpc_channel_address)
     # server.add_insecure_port('127.0.0.1:50051')

@@ -2,20 +2,12 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-<<<<<<< HEAD
 import Camera_pb2 as Camera__pb2
 
 
 class CameraStub(object):
     """Define the service
     """
-=======
-import camera_pb2 as camera__pb2
-
-
-class CameraStub(object):
-    """Missing associated documentation comment in .proto file."""
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
 
     def __init__(self, channel):
         """Constructor.
@@ -23,31 +15,18 @@ class CameraStub(object):
         Args:
             channel: A grpc.Channel.
         """
-<<<<<<< HEAD
         self.StreamImages = channel.unary_stream(
                 '/CameraService.Camera/StreamImages',
                 request_serializer=Camera__pb2.ImageStreamRequest.SerializeToString,
                 response_deserializer=Camera__pb2.ImageResponse.FromString,
-=======
-        self.StreamCamera = channel.unary_stream(
-                '/Camera/StreamCamera',
-                request_serializer=camera__pb2.CameraFrame.SerializeToString,
-                response_deserializer=camera__pb2.CameraFrame.FromString,
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
                 )
 
 
 class CameraServicer(object):
-<<<<<<< HEAD
     """Define the service
     """
 
     def StreamImages(self, request, context):
-=======
-    """Missing associated documentation comment in .proto file."""
-
-    def StreamCamera(self, request, context):
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -56,7 +35,6 @@ class CameraServicer(object):
 
 def add_CameraServicer_to_server(servicer, server):
     rpc_method_handlers = {
-<<<<<<< HEAD
             'StreamImages': grpc.unary_stream_rpc_method_handler(
                     servicer.StreamImages,
                     request_deserializer=Camera__pb2.ImageStreamRequest.FromString,
@@ -65,33 +43,16 @@ def add_CameraServicer_to_server(servicer, server):
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'CameraService.Camera', rpc_method_handlers)
-=======
-            'StreamCamera': grpc.unary_stream_rpc_method_handler(
-                    servicer.StreamCamera,
-                    request_deserializer=camera__pb2.CameraFrame.FromString,
-                    response_serializer=camera__pb2.CameraFrame.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'Camera', rpc_method_handlers)
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
 class Camera(object):
-<<<<<<< HEAD
     """Define the service
     """
 
     @staticmethod
     def StreamImages(request,
-=======
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def StreamCamera(request,
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
             target,
             options=(),
             channel_credentials=None,
@@ -101,14 +62,8 @@ class Camera(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-<<<<<<< HEAD
         return grpc.experimental.unary_stream(request, target, '/CameraService.Camera/StreamImages',
             Camera__pb2.ImageStreamRequest.SerializeToString,
             Camera__pb2.ImageResponse.FromString,
-=======
-        return grpc.experimental.unary_stream(request, target, '/Camera/StreamCamera',
-            camera__pb2.CameraFrame.SerializeToString,
-            camera__pb2.CameraFrame.FromString,
->>>>>>> 3b6cd222f12e67a85c831f7eb0dc8aabce2d8e61
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
