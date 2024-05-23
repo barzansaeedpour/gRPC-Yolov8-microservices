@@ -1,4 +1,6 @@
 */env
+/plate_detection_service/detected_plates/
+/plate_detection_service/saved_images/
 /plate_detection_service/my_yolo_v8/models/
 /plate_detection_service/my_yolo_v8/outputs/
 /client/env
