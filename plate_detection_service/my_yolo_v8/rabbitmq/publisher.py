@@ -2,13 +2,20 @@
 import pika
 import os
 import time
+from dotenv import find_dotenv, load_dotenv
+
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+AMQP_URL = os.getenv("AMQP_URL")
 
 # read rabbitmq connection url from environment variable
 def publish(plate:str):
     print('******** plate:',plate,'********')
     # pass
     # read rabbitmq connection url from environment variable
-    amqp_url = os.environ['AMQP_URL']
+    # amqp_url = os.environ['AMQP_URL']
+    amqp_url = AMQP_URL
     url_params = pika.URLParameters(amqp_url)
 
     # connect to rabbitmq

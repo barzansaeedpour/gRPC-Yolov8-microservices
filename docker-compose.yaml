@@ -1,62 +1,63 @@
 version: '3.8'
 
 services:
-    db:
-      image: postgres:alpine
-      environment:
-        POSTGRES_PASSWORD: mysecretpassword
-      volumes:
-        - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
-      ports:
-        - "5432:5432"
-    pgadmin:
-      image: dpage/pgadmin4
-      environment:
-        PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
-        PGADMIN_DEFAULT_PASSWORD: root
-      ports:
-        - "8080:80"
-        
-#   producer:
-#     build: producer
-#     depends_on:
-#         - rabbit_mq
-#     environment:
-#         AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-#     volumes:
-#       - ./producer:/usr/src/app/producer
-#   consumer1:
-#     build: consumer
-#     depends_on:
-#         - rabbit_mq
-#     environment:
-#         AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-#     volumes:
-#       - ./consumer:/usr/src/app/consumer
-#   rabbit_mq:
-#     # we use management image to get the
-#     # plugin for web dashboard
-#     # image: rabbitmq:3.8-rc-management
-#     image: rabbitmq:management
-#     container_name: rabbit_mq
-#     ports:
-#         - '5672:5672'
-#         - '15672:15672'
-#     volumes:
-#       - rabbit_mqdata:/usr/share/rabbitmq/data
-#   # rabbitmq:
-#   #   image: rabbitmq:management
-#   #   container_name: rabbitmq
-#   #   # restart: always
-#   #   environment:
-#   #     - RABBITMQ_DEFAULT_USER=guest
-#   #     - RABBITMQ_DEFAULT_PASS=guest
-#   #   ports:
-#   #     - "5672:5672"  # RabbitMQ default port
-#   #     - "15672:15672"  # RabbitMQ management UI port
-#   #   volumes:
-#   #     - rabbit_mqdata:/code/
-#   # Client
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "8080:80"
+      
+  # producer:
+  #   build: producer
+  #   depends_on:
+  #       - rabbit_mq
+  #   environment:
+  #       AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+  #   volumes:
+  #     - ./producer:/usr/src/app/producer
+  consumer1:
+    build: consumer
+    depends_on:
+        - rabbit_mq
+    environment:
+        AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+    volumes:
+      - ./consumer:/usr/src/app/consumer
+  rabbit_mq:
+    # we use management image to get the
+    # plugin for web dashboard
+    # image: rabbitmq:3.8-rc-management
+    image: rabbitmq:management
+    container_name: rabbit_mq
+    ports:
+        - '5672:5672'
+        - '15672:15672'
+    volumes:
+      - rabbit_mqdata:/usr/share/rabbitmq/data
+  # rabbitmq:
+  #   image: rabbitmq:management
+  #   container_name: rabbitmq
+  #   # restart: always
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=guest
+  #     - RABBITMQ_DEFAULT_PASS=guest
+  #   ports:
+  #     - "5672:5672"  # RabbitMQ default port
+  #     - "15672:15672"  # RabbitMQ management UI port
+  #   volumes:
+  #     - rabbit_mqdata:/code/
+
+# ## Client
 #   plate-detection-client:
 #     # image: my_yolov822:latest
 #     environment:
@@ -75,35 +76,35 @@ services:
 #     volumes:
 #       - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
 #       - D:/gRPC-Yolov8-microservices/client/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
-    
+  
 
-#   # Server
-#   camera-service-server:
-#     # image: camera_service22:latest
-#     environment:
-#         AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-#     build: 
-#       context: ./server
-#       dockerfile: ./Dockerfile
-#     image: camera-service:latest
-#     container_name: camera-service
-#     # restart: always
+  # # Server
+  # camera-service-server:
+  #   # image: camera_service22:latest
+  #   environment:
+  #       AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+  #   build: 
+  #     context: ./server
+  #     dockerfile: ./Dockerfile
+  #   image: camera-service:latest
+  #   container_name: camera-service
+  #   # restart: always
     
-#     volumes:
-#       - D:/gRPC-Yolov8-microservices/server/saved_images:/code/saved_images
-#       - D:/gRPC-Yolov8-microservices/server/files:/code/files
+  #   volumes:
+  #     - D:/gRPC-Yolov8-microservices/server/saved_images:/code/saved_images
+  #     - D:/gRPC-Yolov8-microservices/server/files:/code/files
 
-#     # environment:
-#     #   - DISPLAY=:0  # Set the display environment variable
-#     # volumes:
-#     #   - /tmp/.X11-unix:/tmp/.X11-unix  # Mount X11 socket for GUI applications
-#     # devices:
-#     #   - /dev/video0:/dev/video0  # Map the camera device
+  #   # environment:
+  #   #   - DISPLAY=:0  # Set the display environment variable
+  #   # volumes:
+  #   #   - /tmp/.X11-unix:/tmp/.X11-unix  # Mount X11 socket for GUI applications
+  #   # devices:
+  #   #   - /dev/video0:/dev/video0  # Map the camera device
 
   
+volumes:
+    rabbit_mqdata:
+      driver: local
 # volumes:
-#     rabbit_mqdata:
-#       driver: local
-# # volumes:
-# #   plate-detection-client:
-# #     - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
+#   plate-detection-client:
+#     - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
