@@ -98,12 +98,12 @@ def plate_detection(frame, save_dir):
             font = ImageFont.truetype("arial.ttf", 12)    
             draw.rectangle([(x1, y1), (x2, y2)], outline =color,)
             # draw.rectangle([(org[0], org[1]), (org[0]+(len(text)*25), org[1]+25)], fill =color)
-            draw.rectangle([(org[0], org[1]), (org[0]+70, org[1]+25)], fill =color)
+            draw.rectangle([(org[0], org[1]), (org[0]+65, org[1]+25)], fill =color)
             draw.text(org, f"{persian(text)} -> %{round(confidence*100,2)}", font=font,fill=(255,255,255))
             img = np.array(img)
 
         img = np.array(img)
-        cv2.imwrite(save_dir + new_name +'.png',img)
+        cv2.imwrite(save_dir + new_name +'-detected.png',img)
         time.sleep(0.1)
         return detected_classes
         # cv2.imshow("Real-time Webcam", img)

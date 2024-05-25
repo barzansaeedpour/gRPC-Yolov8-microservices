@@ -28,7 +28,7 @@ from sqlalchemy import create_engine
 from dotenv import find_dotenv, load_dotenv
 from my_yolo_v8.yolov8 import plate_detection
 from my_yolo_v8.rabbitmq.publisher import publish
-
+from my_yolo_v8.utils.utils import get_new_name
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
@@ -37,7 +37,7 @@ server_grpc_channel_address = os.getenv("server_grpc_channel_address")
 postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
 client_grpc_channel_address = os.getenv("client_grpc_channel_address")
-save_dir = f'{base_dir}/saved_images/'
+save_dir = f'{base_dir}/detected_plates/'
 # plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
 plate_detection_output_path = f"{base_dir}/detected_plates/"
 
@@ -68,15 +68,15 @@ postgresql_password = os.getenv("postgresql_password")
 
 
 
-def get_new_name():
-    # Get the current date and time
-    current_datetime = datetime.now()
-    # Format the datetime as desired (e.g., YYYYMMDD-HHMMSS)
-    formatted_datetime = current_datetime.strftime("%Y%m%d-%H%M%S")
-    # Create a unique filename
-    filename = f"my_file_{formatted_datetime}"
-    # print(f"Unique filename: {filename}")
-    return filename
+# def get_new_name():
+#     # Get the current date and time
+#     current_datetime = datetime.now()
+#     # Format the datetime as desired (e.g., YYYYMMDD-HHMMSS)
+#     formatted_datetime = current_datetime.strftime("%Y%m%d-%H%M%S")
+#     # Create a unique filename
+#     filename = f"my_file_{formatted_datetime}"
+#     # print(f"Unique filename: {filename}")
+#     return filename
 
 # class CameraServicer(camera_pb2_grpc.CameraServicer):
 #     def StreamCamera(self, request_iterator, context):
@@ -154,22 +154,23 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     base64_frame = response.ImageData
                     nparr = np.frombuffer(base64_frame, np.uint8)
                     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                    # new_name = get_new_name()
+                    new_name = get_new_name()
                     # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
                     detected_plate = plate_detection(frame, save_dir=plate_detection_output_path)
                     if detected_plate:
+                        path = f"{save_dir}{new_name}-frame.png"
+                        cv2.imwrite(path, frame)
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
-                            detected_plates[detected_plate] += 1
-                            if detected_plates[detected_plate] > 0:
-                                new_name = get_new_name()
-                                path = f"{save_dir}{new_name}.png"
-                                b = cv2.imwrite(path, frame)
-                                publish(plate= detected_plate, path = path)
+                            detected_plates[detected_plate] += 1    
+                            if detected_plates[detected_plate] > 3:
+                                
+                                publish(detected_plates, path)
                                 with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
                                     # file.write(f"{str(detected_plates)}\n")
                                     json.dump(detected_plates, file)
                                 print(100*'*')
+                                response.cancel()
                         else:
                             detected_plates[detected_plate] = 1
                        
@@ -178,7 +179,8 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
             except KeyboardInterrupt:
                 pass
             finally:
-                cv2.destroyAllWindows()
+                pass
+                # cv2.destroyAllWindows()
         # x = stream_camera_from_back_service()
         # print(x)
         # for i in range(10):

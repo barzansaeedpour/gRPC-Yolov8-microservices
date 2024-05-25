@@ -24,9 +24,9 @@ def callback(ch, method, properties, body):
     payload = json.loads(body)
     print('[x] Generating report')
     print(f"""
-          plate: {payload.get('plate')}
-          path: {payload.get('path')}
+          detected_plates: {payload.get('detected_plates')}
           """)
+        #   path: {payload.get('path')}
     print('[x] Done')
     # we will send an aknowledgement to RabbitMQ that we received the message, and RabbitMQ is free to delete the message
     ch.basic_ack(delivery_tag=method.delivery_tag)
