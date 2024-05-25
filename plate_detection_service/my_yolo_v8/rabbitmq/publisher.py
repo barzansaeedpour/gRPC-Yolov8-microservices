@@ -3,7 +3,7 @@ import pika
 import os
 import time
 from dotenv import find_dotenv, load_dotenv
-
+import json
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
@@ -11,33 +11,58 @@ AMQP_URL = os.getenv("AMQP_URL")
 
 # read rabbitmq connection url from environment variable
 def publish(plate:str):
-    print('******** plate:',plate,'********')
-    # pass
-    # read rabbitmq connection url from environment variable
-    # amqp_url = os.environ['AMQP_URL']
-    amqp_url = AMQP_URL
-    url_params = pika.URLParameters(amqp_url)
+    
+    # Stablish the connection to RabbitMQ
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
 
-    # connect to rabbitmq
-    connection = pika.BlockingConnection(url_params)
-    chan = connection.channel()
+    # declare the exchange
+    channel.exchange_declare(
+        exchange='order', # name of the exchange
+        exchange_type='direct' # the exchange type
+    )
 
-    # declare a new queue
-    # durable flag is set so that messages are retained
-    # in the rabbitmq volume even between restarts
-    chan.queue_declare(queue='hello', durable=True)
+    channel.basic_publish(
+        exchange='order', # the exchange that we want to use
+        routing_key='order.report',
+        body=json.dumps({"plate": plate}) # body of the message
+    )
 
-    # publish a 100 messages to the queue
-    # for i in range(5):
-    chan.basic_publish(exchange='', routing_key='hello',
-                    body=plate, properties=pika.BasicProperties(delivery_mode=2))
-    print(f"Produced the message: {plate}")
+    print('[x] Sent report message')
 
-    # close the channel and connection
-    # to avoid program from entering with any lingering
-    # message in the queue cache
-    chan.close()
-    connection.close()
+
+    # close the message
+    connection.close() 
+    
+# # read rabbitmq connection url from environment variable
+# def publish(plate:str):
+#     print('******** plate:',plate,'********')
+#     # pass
+#     # read rabbitmq connection url from environment variable
+#     # amqp_url = os.environ['AMQP_URL']
+#     amqp_url = AMQP_URL
+#     url_params = pika.URLParameters(amqp_url)
+
+#     # connect to rabbitmq
+#     connection = pika.BlockingConnection(url_params)
+#     chan = connection.channel()
+
+#     # declare a new queue
+#     # durable flag is set so that messages are retained
+#     # in the rabbitmq volume even between restarts
+#     chan.queue_declare(queue='hello', durable=True)
+
+#     # publish a 100 messages to the queue
+#     # for i in range(5):
+#     chan.basic_publish(exchange='', routing_key='hello',
+#                     body=plate, properties=pika.BasicProperties(delivery_mode=2))
+#     print(f"Produced the message: {plate}")
+
+#     # close the channel and connection
+#     # to avoid program from entering with any lingering
+#     # message in the queue cache
+#     chan.close()
+#     connection.close()
 
 
 #################################################################
