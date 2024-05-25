@@ -156,7 +156,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
             stub = Camera_pb2_grpc.CameraStub(channel)
             try:
                 for response in stub.StreamImages(Camera_pb2.ImageStreamRequest(connection_string="rtsp://192.168.100.7/onvif1",
-                                                                                FramePerSecond=2,
+                                                                                FramePerSecond=5,
                                                                                 Password="admin",
                                                                                 UserName="admin"
                                                                                 )):
@@ -172,7 +172,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate] += 1    
-                            if detected_plates[detected_plate] > 3:
+                            if detected_plates[detected_plate] > 10:
                                 
                                 publish(detected_plates, path)
                                 with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
