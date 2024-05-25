@@ -158,20 +158,22 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
                     detected_plate = plate_detection(frame, save_dir=plate_detection_output_path)
                     if detected_plate:
-                        publish(plate= detected_plate)
+                        # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate] += 1
                             if detected_plates[detected_plate] > 0:
-                                publish(plate= detected_plate)
-                                print(200*'*')
+                                new_name = get_new_name()
+                                path = f"{save_dir}{new_name}.png"
+                                b = cv2.imwrite(path, frame)
+                                publish(plate= detected_plate, path = path)
+                                with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
+                                    # file.write(f"{str(detected_plates)}\n")
+                                    json.dump(detected_plates, file)
+                                print(100*'*')
                         else:
                             detected_plates[detected_plate] = 1
-                        with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
-                                # file.write(f"{str(detected_plates)}\n")
-                                json.dump(detected_plates, file)
-                    new_name = get_new_name()
-                    # print(new_name)
-                    b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
+                       
+                    
 
             except KeyboardInterrupt:
                 pass

@@ -25,6 +25,7 @@ def callback(ch, method, properties, body):
     print('[x] Generating report')
     print(f"""
           plate: {payload.get('plate')}
+          path: {payload.get('path')}
           """)
     print('[x] Done')
     # we will send an aknowledgement to RabbitMQ that we received the message, and RabbitMQ is free to delete the message

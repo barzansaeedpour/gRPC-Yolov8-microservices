@@ -88,12 +88,18 @@ def plate_detection(frame, save_dir):
             except:
                 pass
             draw = ImageDraw.Draw(img)
-            draw.rectangle([(x1, y1), (x2, y2)], outline ='red',)
 
             text = classNames2[cls]
-            color = (0, 0, 255)  # Red color
-            draw.rectangle([(org[0], org[1]), (org[0]+(len(text)*15), org[1]+25)], fill =(255,100,100))
-            draw.text(org, persian(text), fill=(255,255,255))
+            
+            if confidence<0.80:
+                color = (0, 0, 255)  # Red color
+            else:
+                color = (255,100,100)
+            font = ImageFont.truetype("arial.ttf", 12)    
+            draw.rectangle([(x1, y1), (x2, y2)], outline =color,)
+            # draw.rectangle([(org[0], org[1]), (org[0]+(len(text)*25), org[1]+25)], fill =color)
+            draw.rectangle([(org[0], org[1]), (org[0]+70, org[1]+25)], fill =color)
+            draw.text(org, f"{persian(text)} -> %{round(confidence*100,2)}", font=font,fill=(255,255,255))
             img = np.array(img)
 
         img = np.array(img)

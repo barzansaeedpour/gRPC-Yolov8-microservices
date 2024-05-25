@@ -10,7 +10,7 @@ load_dotenv(dotenv_path)
 AMQP_URL = os.getenv("AMQP_URL")
 
 # read rabbitmq connection url from environment variable
-def publish(plate:str):
+def publish(plate:str, path: str):
     
     # Stablish the connection to RabbitMQ
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -25,7 +25,7 @@ def publish(plate:str):
     channel.basic_publish(
         exchange='order', # the exchange that we want to use
         routing_key='order.report',
-        body=json.dumps({"plate": plate}) # body of the message
+        body=json.dumps({"plate": plate,"path": path}) # body of the message
     )
 
     print('[x] Sent report message')
