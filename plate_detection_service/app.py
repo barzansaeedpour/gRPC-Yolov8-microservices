@@ -156,7 +156,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
             stub = Camera_pb2_grpc.CameraStub(channel)
             try:
                 for response in stub.StreamImages(Camera_pb2.ImageStreamRequest(connection_string="rtsp://192.168.100.7/onvif1",
-                                                                                FramePerSecond=5,
+                                                                                FramePerSecond=3,
                                                                                 Password="admin",
                                                                                 UserName="admin"
                                                                                 )):
