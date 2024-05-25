@@ -37,20 +37,21 @@ server_grpc_channel_address = os.getenv("server_grpc_channel_address")
 postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
 client_grpc_channel_address = os.getenv("client_grpc_channel_address")
-save_dir = f'{base_dir}/detected_plates/'
+# save_dir = f'{base_dir}/detected_plates/'
 # plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
-plate_detection_output_path = f"{base_dir}/detected_plates/"
+plate_detection_base_output_path = f"{base_dir}/detected_plates/"
+
+# try:
+#     shutil.rmtree(save_dir)
+# except:
+#     pass
+# os.makedirs(save_dir, exist_ok=True)
 
 try:
-    shutil.rmtree(save_dir)
+    shutil.rmtree(plate_detection_base_output_path)
 except:
     pass
-os.makedirs(save_dir, exist_ok=True)
-try:
-    shutil.rmtree(plate_detection_output_path)
-except:
-    pass
-os.makedirs(plate_detection_output_path, exist_ok=True)
+os.makedirs(plate_detection_base_output_path, exist_ok=True)
 
 from datetime import datetime
 import shutil
@@ -142,6 +143,14 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
+        
+        plate_detection_output_path = plate_detection_base_output_path
+        current_datetime = datetime.now()
+        current_datetime = current_datetime.strftime("%Y-%m-%d-%H-%M-%S")
+        # plate_detection_output_path = f"{}{current_datetime}/"
+        plate_detection_output_path = plate_detection_output_path + current_datetime + '/'
+        os.makedirs(plate_detection_output_path,exist_ok=True)
+        
         detected_plates = {}
         with grpc.insecure_channel(client_grpc_channel_address) as channel:
             stub = Camera_pb2_grpc.CameraStub(channel)
@@ -158,7 +167,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
                     detected_plate = plate_detection(frame, save_dir=plate_detection_output_path)
                     if detected_plate:
-                        path = f"{save_dir}{new_name}-frame.png"
+                        path = f"{plate_detection_output_path}{new_name}-frame.png"
                         cv2.imwrite(path, frame)
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
