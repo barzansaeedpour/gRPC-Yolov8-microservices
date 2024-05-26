@@ -10,15 +10,17 @@ import uuid
 
 # AMQP_URL = os.getenv("AMQP_URL")
 
-
-
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+redis_host = os.getenv("REDIS_HOST")
+redis_port = os.getenv("REDIS_PORT")
 
 # Save the result in Redis
-def publish(detected_plates, path, REDIS_HOST, REDIS_PORT):
+def publish(detected_plates, path):
     
     redis_cli = redis.Redis(
-    host=REDIS_HOST,
-    port=REDIS_PORT,
+    host=redis_host,
+    port=redis_port,
     charset="utf-8",
     decode_responses=True
     )
@@ -27,6 +29,7 @@ def publish(detected_plates, path, REDIS_HOST, REDIS_PORT):
     # print(guid)
     key_name = f'plate_detection_service:detection_result:{guid}'
 
+    detected_plates.sort
     for plate, number_of_detection in detected_plates.items():
         # print(plate, number_of_detection) 
         redis_cli.hset(key_name, plate, number_of_detection)

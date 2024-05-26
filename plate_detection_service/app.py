@@ -37,8 +37,7 @@ server_grpc_channel_address = os.getenv("server_grpc_channel_address")
 postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
 client_grpc_channel_address = os.getenv("client_grpc_channel_address")
-REDIS_HOST = os.getenv("REDIS_HOST")
-REDIS_PORT = os.getenv("REDIS_HOST")
+
 # save_dir = f'{base_dir}/detected_plates/'
 # plate_detection_output_path = f"{base_dir}/my_yolo_v8/outputs/"
 plate_detection_base_output_path = f"{base_dir}/detected_plates/"
@@ -175,9 +174,8 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate] += 1    
-                            if detected_plates[detected_plate] > 3:
-                                
-                                 publish(detected_plates, path, REDIS_HOST, REDIS_PORT)
+                            if detected_plates[detected_plate] > 3:                                
+                                publish(detected_plates, path)
                                 with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
                                     # file.write(f"{str(detected_plates)}\n")
                                     json.dump(detected_plates, file)
