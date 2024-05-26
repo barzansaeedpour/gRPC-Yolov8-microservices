@@ -4,35 +4,57 @@ import os
 import time
 from dotenv import find_dotenv, load_dotenv
 import json
+import redis
+import uuid
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
-AMQP_URL = os.getenv("AMQP_URL")
+# AMQP_URL = os.getenv("AMQP_URL")
 
-# read rabbitmq connection url from environment variable
+
+
+
+# Save the result in Redis
 def publish(detected_plates, path):
+    REDIS_HOST = os.getenv("REDIS_HOST")
+    REDIS_PORT = os.getenv("REDIS_HOST")
+    redis_cli = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    charset="utf-8",
+    decode_responses=True
+    )
+
+    guid = str(uuid.uuid4())
+    # print(guid)
+    key_name = f'plate_detection_service:detection_result:{guid}'
+
+    for plate, number_of_detection in detected_plates.items():
+        # print(plate, number_of_detection) 
+        redis_cli.hset(key_name, plate, number_of_detection)
     
-    # Stablish the connection to RabbitMQ
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-    channel = connection.channel()
-
-    # declare the exchange
-    channel.exchange_declare(
-        exchange='order', # name of the exchange
-        exchange_type='direct' # the exchange type
-    )
-
-    channel.basic_publish(
-        exchange='order', # the exchange that we want to use
-        routing_key='order.report',
-        body=json.dumps({"detected_plates": detected_plates,}) # body of the message
-    )
-
-    print('[x] Sent report message')
-
-
-    # close the message
-    connection.close() 
+    print("********** added to redis *********")
+#     redis_cli.hset(key_name, '16dal37161', 11)
+#     redis_cli.hset(key_name, '16dal37151', 8)
+    
+# # read rabbitmq connection url from environment variable
+# def publish(detected_plates, path):
+#     # Stablish the connection to RabbitMQ
+#     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+#     channel = connection.channel()
+#     # declare the exchange
+#     channel.exchange_declare(
+#         exchange='order', # name of the exchange
+#         exchange_type='direct' # the exchange type
+#     )
+#     channel.basic_publish(
+#         exchange='order', # the exchange that we want to use
+#         routing_key='order.report',
+#         body=json.dumps({"detected_plates": detected_plates,}) # body of the message
+#     )
+#     print('[x] Sent report message')
+#     # close the message
+#     connection.close() 
     
 # # read rabbitmq connection url from environment variable
 # def publish(plate:str):
