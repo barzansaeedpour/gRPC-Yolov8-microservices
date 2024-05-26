@@ -29,7 +29,8 @@ def publish(detected_plates, path):
     # print(guid)
     key_name = f'plate_detection_service:detection_result:{guid}'
 
-    detected_plates.sort
+    detected_plates = sorted(detected_plates.items(), key=lambda x:x[1], reverse=True)
+    detected_plates = dict(detected_plates)
     for plate, number_of_detection in detected_plates.items():
         # print(plate, number_of_detection) 
         redis_cli.hset(key_name, plate, number_of_detection)
