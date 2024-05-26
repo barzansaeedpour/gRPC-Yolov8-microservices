@@ -7,17 +7,15 @@ import json
 import redis
 import uuid
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path)
+
 # AMQP_URL = os.getenv("AMQP_URL")
 
 
 
 
 # Save the result in Redis
-def publish(detected_plates, path):
-    REDIS_HOST = os.getenv("REDIS_HOST")
-    REDIS_PORT = os.getenv("REDIS_HOST")
+def publish(detected_plates, path, REDIS_HOST, REDIS_PORT):
+    
     redis_cli = redis.Redis(
     host=REDIS_HOST,
     port=REDIS_PORT,
