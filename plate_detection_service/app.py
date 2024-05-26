@@ -68,6 +68,8 @@ base_dir = os.getenv("base_dir_server")
 server_grpc_channel_address = os.getenv("server_grpc_channel_address")
 postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
+frames_per_second = int(os.getenv("FRAMES_PER_SECOND"))
+max_number_of_detection = int(os.getenv("MAX_NUMBER_OF_DETECTION"))
 
 
 
@@ -158,7 +160,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
             stub = Camera_pb2_grpc.CameraStub(channel)
             try:
                 for response in stub.StreamImages(Camera_pb2.ImageStreamRequest(connection_string="rtsp://192.168.100.7/onvif1",
-                                                                                FramePerSecond=3,
+                                                                                FramePerSecond=frames_per_second,
                                                                                 Password="admin",
                                                                                 UserName="admin"
                                                                                 )):
@@ -174,7 +176,8 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate] += 1    
-                            if detected_plates[detected_plate] > 3:                                
+                            if detected_plates[detected_plate] > max_number_of_detection:
+                                detected_plates = dict(sorted(detected_plates.items(), key=lambda x:x[1], reverse=True))
                                 publish(detected_plates, path)
                                 with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
                                     # file.write(f"{str(detected_plates)}\n")

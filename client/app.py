@@ -3,6 +3,8 @@ import grpc
 import cv2
 import Camera_pb2
 import Camera_pb2_grpc
+import ReadPlate_pb2
+import ReadPlate_pb2_grpc
 import numpy as np
 from datetime import datetime
 import os
@@ -99,6 +101,17 @@ def stream_camera_from_back_service():
             pass
         finally:
             cv2.destroyAllWindows()
+            
+def ReadPlate():
+    with grpc.insecure_channel(client_grpc_channel_address) as channel:
+        stub = ReadPlate_pb2_grpc.ReadPlateStub(channel)
+        try:
+            for response in stub.ReadPlates(ReadPlate_pb2.ReadPlateRequest()):
+                pass
+        except KeyboardInterrupt:
+            pass
+        finally:
+            cv2.destroyAllWindows()
 
 
 # def stream_camera():
@@ -136,6 +149,5 @@ def stream_camera_from_back_service():
 #             cv2.destroyAllWindows()
 if __name__ == '__main__':
     # stream_camera()
-    stream_camera_from_back_service(
-
-    )
+    # stream_camera_from_back_service()
+    ReadPlate()

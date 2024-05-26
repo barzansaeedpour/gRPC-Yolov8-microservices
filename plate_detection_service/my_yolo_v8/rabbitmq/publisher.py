@@ -14,7 +14,7 @@ dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 redis_host = os.getenv("REDIS_HOST")
 redis_port = os.getenv("REDIS_PORT")
-
+redis_exire_seconds = os.getenv("REDIS_EXPIRE_SECONDS")
 # Save the result in Redis
 def publish(detected_plates, path):
     
@@ -29,11 +29,11 @@ def publish(detected_plates, path):
     # print(guid)
     key_name = f'plate_detection_service:detection_result:{guid}'
 
-    detected_plates = sorted(detected_plates.items(), key=lambda x:x[1], reverse=True)
-    detected_plates = dict(detected_plates)
+    
     for plate, number_of_detection in detected_plates.items():
         # print(plate, number_of_detection) 
         redis_cli.hset(key_name, plate, number_of_detection)
+        redis_cli.expire(key_name,redis_exire_seconds)
     
     print("********** added to redis *********")
 #     redis_cli.hset(key_name, '16dal37161', 11)
