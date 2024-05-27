@@ -169,10 +169,8 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                     new_name = get_new_name()
                     # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
-                    detected_plate = plate_detection(frame, save_dir=plate_detection_output_path)
-                    if detected_plate:
-                        path = f"{plate_detection_output_path}{new_name}-frame.png"
-                        cv2.imwrite(path, frame)
+                    detected_plate, detected_plate_image  = plate_detection(frame, save_dir=plate_detection_output_path, save=False)
+                    if detected_plate and len(detected_plate_image)!=0:
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate]['number_of_detection'] += 1    
@@ -186,9 +184,14 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                                 # response.cancel()
                                 return ReadPlate_pb2.ReadPlateReply(result=str(detected_plates))
                         else:
-                            detected_plates[detected_plate] ={}
+                            vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
+                            detected_plate_path = f"{plate_detection_output_path}{new_name}.png"
+                            cv2.imwrite(vehicle_path, frame)
+                            cv2.imwrite(detected_plate_path, detected_plate_image)
+                            detected_plates[detected_plate] = {}
                             detected_plates[detected_plate]['number_of_detection'] = 1
-                            detected_plates[detected_plate]['image_path'] = path
+                            detected_plates[detected_plate]['plate_image_path'] = detected_plate_path
+                            detected_plates[detected_plate]['vehicle_image_path'] = vehicle_path
                             
             except KeyboardInterrupt:
                 return ''
