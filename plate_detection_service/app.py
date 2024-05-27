@@ -147,7 +147,7 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
-        
+        x = request.guid
         plate_detection_output_path = plate_detection_base_output_path
         current_datetime = datetime.now()
         current_datetime = current_datetime.strftime("%Y-%m-%d-%H-%M-%S")

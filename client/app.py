@@ -106,7 +106,7 @@ def ReadPlate():
     with grpc.insecure_channel(client_grpc_channel_address) as channel:
         stub = ReadPlate_pb2_grpc.ReadPlateStub(channel)
         try:
-            for response in stub.ReadPlates(ReadPlate_pb2.ReadPlateRequest()):
+            for response in stub.ReadPlates(ReadPlate_pb2.ReadPlateRequest(guid='shdjfsd-sdf-as-dfasdf-asdf')):
                 pass
         except KeyboardInterrupt:
             pass

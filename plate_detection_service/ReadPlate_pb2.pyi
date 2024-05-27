@@ -5,8 +5,10 @@ from typing import ClassVar as _ClassVar, Optional as _Optional
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ReadPlateRequest(_message.Message):
-    __slots__ = ()
-    def __init__(self) -> None: ...
+    __slots__ = ("guid",)
+    GUID_FIELD_NUMBER: _ClassVar[int]
+    guid: str
+    def __init__(self, guid: _Optional[str] = ...) -> None: ...
 
 class ReadPlateReply(_message.Message):
     __slots__ = ("plate", "image_path")

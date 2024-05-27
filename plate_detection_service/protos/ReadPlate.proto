@@ -4,9 +4,10 @@ package PlateDetection;
 
 service ReadPlate {
   rpc ReadPlates (ReadPlateRequest) returns (stream ReadPlateReply);
-
 }
+
 message ReadPlateRequest {
+  string guid=1;
 }
 
 message ReadPlateReply{
