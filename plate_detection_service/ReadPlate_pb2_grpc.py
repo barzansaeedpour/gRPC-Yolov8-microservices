@@ -14,7 +14,7 @@ class ReadPlateStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.ReadPlates = channel.unary_stream(
+        self.ReadPlates = channel.unary_unary(
                 '/PlateDetection.ReadPlate/ReadPlates',
                 request_serializer=ReadPlate__pb2.ReadPlateRequest.SerializeToString,
                 response_deserializer=ReadPlate__pb2.ReadPlateReply.FromString,
@@ -33,7 +33,7 @@ class ReadPlateServicer(object):
 
 def add_ReadPlateServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'ReadPlates': grpc.unary_stream_rpc_method_handler(
+            'ReadPlates': grpc.unary_unary_rpc_method_handler(
                     servicer.ReadPlates,
                     request_deserializer=ReadPlate__pb2.ReadPlateRequest.FromString,
                     response_serializer=ReadPlate__pb2.ReadPlateReply.SerializeToString,
@@ -59,7 +59,7 @@ class ReadPlate(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/PlateDetection.ReadPlate/ReadPlates',
+        return grpc.experimental.unary_unary(request, target, '/PlateDetection.ReadPlate/ReadPlates',
             ReadPlate__pb2.ReadPlateRequest.SerializeToString,
             ReadPlate__pb2.ReadPlateReply.FromString,
             options, channel_credentials,

@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fReadPlate.proto\x12\x0ePlateDetection\" \n\x10ReadPlateRequest\x12\x0c\n\x04guid\x18\x01 \x01(\t\"3\n\x0eReadPlateReply\x12\r\n\x05plate\x18\x01 \x01(\t\x12\x12\n\nimage_path\x18\x02 \x01(\t2]\n\tReadPlate\x12P\n\nReadPlates\x12 .PlateDetection.ReadPlateRequest\x1a\x1e.PlateDetection.ReadPlateReply0\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fReadPlate.proto\x12\x0ePlateDetection\" \n\x10ReadPlateRequest\x12\x0c\n\x04guid\x18\x01 \x01(\t\" \n\x0eReadPlateReply\x12\x0e\n\x06result\x18\x01 \x01(\t2[\n\tReadPlate\x12N\n\nReadPlates\x12 .PlateDetection.ReadPlateRequest\x1a\x1e.PlateDetection.ReadPlateReplyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -24,7 +24,7 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['_READPLATEREQUEST']._serialized_start=35
   _globals['_READPLATEREQUEST']._serialized_end=67
   _globals['_READPLATEREPLY']._serialized_start=69
-  _globals['_READPLATEREPLY']._serialized_end=120
-  _globals['_READPLATE']._serialized_start=122
-  _globals['_READPLATE']._serialized_end=215
+  _globals['_READPLATEREPLY']._serialized_end=101
+  _globals['_READPLATE']._serialized_start=103
+  _globals['_READPLATE']._serialized_end=194
 # @@protoc_insertion_point(module_scope)
