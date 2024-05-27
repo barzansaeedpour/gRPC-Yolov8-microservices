@@ -16,7 +16,7 @@ redis_host = os.getenv("REDIS_HOST")
 redis_port = os.getenv("REDIS_PORT")
 redis_exire_seconds = os.getenv("REDIS_EXPIRE_SECONDS")
 # Save the result in Redis
-def publish(detected_plates, path):
+def publish(detected_plates, path, guid):
     
     redis_cli = redis.Redis(
     host=redis_host,
@@ -25,8 +25,8 @@ def publish(detected_plates, path):
     decode_responses=True
     )
 
-    guid = str(uuid.uuid4())
-    # print(guid)
+    # guid = str(uuid.uuid4())
+    
     key_name = f'plate_detection_service:detection_result:{guid}'
 
     

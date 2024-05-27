@@ -3,7 +3,7 @@ syntax = "proto3";
 package PlateDetection;
 
 service ReadPlate {
-  rpc ReadPlates (ReadPlateRequest) returns (stream ReadPlateReply);
+  rpc ReadPlates (ReadPlateRequest) returns (ReadPlateReply);
 }
 
 message ReadPlateRequest {
@@ -11,9 +11,9 @@ message ReadPlateRequest {
 }
 
 message ReadPlateReply{
-  string plate = 1;
-  string image_path = 2;
+  string result = 1;
 }
 
+// string image_path = 2;
 
 // python -m grpc_tools.protoc -I./protos --python_out=. --pyi_out=. --grpc_python_out=. ./protos/ReadPlate.proto

@@ -147,7 +147,7 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
 
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
-        x = request.guid
+        guid = request.guid
         plate_detection_output_path = plate_detection_base_output_path
         current_datetime = datetime.now()
         current_datetime = current_datetime.strftime("%Y-%m-%d-%H-%M-%S")
@@ -175,24 +175,24 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                         cv2.imwrite(path, frame)
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
-                            detected_plates[detected_plate] += 1    
-                            if detected_plates[detected_plate] >= max_number_of_detection:
-                                detected_plates = dict(sorted(detected_plates.items(), key=lambda x:x[1], reverse=True))
-                                publish(detected_plates, path)
+                            detected_plates[detected_plate]['number_of_detection'] += 1    
+                            if detected_plates[detected_plate]['number_of_detection'] >= max_number_of_detection:
+                                # detected_plates = dict(sorted(detected_plates.items(), key=lambda x:x[1], reverse=True))
+                                # publish(detected_plates, path, guid=guid)
                                 with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
                                     # file.write(f"{str(detected_plates)}\n")
                                     json.dump(detected_plates, file)
                                 print(100*'*')
-                                response.cancel()
+                                # response.cancel()
+                                return ReadPlate_pb2.ReadPlateReply(result=str(detected_plates))
                         else:
-                            detected_plates[detected_plate] = 1
-                       
-                    
-
+                            detected_plates[detected_plate] ={}
+                            detected_plates[detected_plate]['number_of_detection'] = 1
+                            detected_plates[detected_plate]['image_path'] = path
+                            
             except KeyboardInterrupt:
-                pass
-            finally:
-                pass
+                return ''
+        return ''
                 # cv2.destroyAllWindows()
         # x = stream_camera_from_back_service()
         # print(x)
