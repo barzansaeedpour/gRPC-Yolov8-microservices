@@ -43,10 +43,20 @@ def check_detected_classes_validation(detected_classes, numbers, letters, path, 
         all_x1s = [x.xyxy[0][0].item() for x in boxes]
         all_x1s, detected_classes = zip(*sorted(zip(all_x1s , detected_classes )))
         
+       
         with open(f"{path}detection.txt", "a") as file:
             # Write content to the file
             detected_classes = ''.join(detected_classes)
             text = str(detected_classes)
             file.write(f"{text}\n")
             time.sleep(0.1)
+        
+        t = detected_classes
+        detected_letter = t[2:-5]
+        if (t[0] in numbers) and (t[1] in numbers) and (t[-1] in numbers) and (t[-2] in numbers) and (t[-3] in numbers) and (t[-4] in numbers) and (t[-5] in numbers) and (detected_letter in letters):
+            pass
+        else:
+            not_valid = True
+            return not_valid , ''
+        
         return not_valid, detected_classes

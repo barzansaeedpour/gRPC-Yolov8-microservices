@@ -176,7 +176,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
                             detected_plates[detected_plate] += 1    
-                            if detected_plates[detected_plate] > max_number_of_detection:
+                            if detected_plates[detected_plate] >= max_number_of_detection:
                                 detected_plates = dict(sorted(detected_plates.items(), key=lambda x:x[1], reverse=True))
                                 publish(detected_plates, path)
                                 with open(f"{plate_detection_output_path}detection_counter.json", "w") as file:
