@@ -38,7 +38,7 @@ classNames2 = numbers + letters
 # classNames2 = list(model_character_detection.names.values())
 
 
-def plate_detection(frame, save_dir):
+def plate_detection(frame, save_dir,save = True):
     img = frame
     results = model_plate_detection.predict(source=img, conf = 0.1, save=False, show = False, project=save_dir, name="", save_txt = False) 
     for r in results:
@@ -103,9 +103,10 @@ def plate_detection(frame, save_dir):
             img = np.array(img)
 
         img = np.array(img)
-        cv2.imwrite(save_dir + new_name +'-detected.png',img)
+        if save:
+            cv2.imwrite(save_dir + new_name +'-detected.png',img)
         time.sleep(0.1)
-        return detected_classes
+        return detected_classes, img
         # cv2.imshow("Real-time Webcam", img)
         # time.sleep(0.1)
-    return ''
+    return '', []
