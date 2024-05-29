@@ -98,7 +98,9 @@ def plate_detection(frame, save_dir,save = True):
                 color = (0, 0, 255)  # Red color
             else:
                 color = (255,100,100)
-            font = ImageFont.truetype("arial.ttf", 12)    
+            
+            font = ImageFont.truetype(f"{base_dir}/my_yolo_v8/fonts/arial.ttf", 12)    
+            
             draw.rectangle([(x1, y1), (x2, y2)], outline =color,)
             # draw.rectangle([(org[0], org[1]), (org[0]+(len(text)*25), org[1]+25)], fill =color)
             draw.rectangle([(org[0], org[1]), (org[0]+65, org[1]+25)], fill =color)
@@ -107,9 +109,13 @@ def plate_detection(frame, save_dir,save = True):
 
         img = np.array(img)
         if save:
+           
             cv2.imwrite(save_dir + new_name +'-detected.png',img)
         time.sleep(0.1)
+        
         return detected_classes, img
         # cv2.imshow("Real-time Webcam", img)
         # time.sleep(0.1)
+
+
     return '', []

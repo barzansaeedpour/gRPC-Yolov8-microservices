@@ -55,12 +55,6 @@ except:
     pass
 os.makedirs(plate_detection_base_output_path, exist_ok=True)
 
-from datetime import datetime
-import shutil
-import os
-import pandas as pd
-from sqlalchemy import create_engine
-from dotenv import find_dotenv, load_dotenv
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
@@ -70,7 +64,6 @@ postgresql_user = os.getenv('postgresql_user')
 postgresql_password = os.getenv("postgresql_password")
 frames_per_second = int(os.getenv("FRAMES_PER_SECOND"))
 max_number_of_detection = int(os.getenv("MAX_NUMBER_OF_DETECTION"))
-
 
 
 # def get_new_name():
@@ -93,20 +86,20 @@ max_number_of_detection = int(os.getenv("MAX_NUMBER_OF_DETECTION"))
 #         except:
 #             pass
 #         os.makedirs(saved_images, exist_ok=True)
-        
+
 #         # print(video_path)
-        
+
 #         # cap = cv2.VideoCapture(0)
 #         # cap = cv2.VideoCapture(video_path)
-        
+
 #         # try:
 #         #     while True:
 #         #         ret, frame = cap.read()
 #         #         # print(ret)
-                
+
 #         #         # new_name = get_new_name()
 #         #         # cv2.imwrite(f"{saved_images}{new_name}.png", frame)
-                
+
 #         #         if not ret:
 #         #             break
 
@@ -121,18 +114,19 @@ max_number_of_detection = int(os.getenv("MAX_NUMBER_OF_DETECTION"))
 #         #         time.sleep(0.1)
 #         # finally:
 #         #     cap.release()
-            
+
 
 class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
     def GetClaimsList(self, request, context):
-        
+
         dotenv_path = find_dotenv()
         load_dotenv(dotenv_path)
         base_dir = os.getenv("base_dir_camera_webapp")
         # db_engine = create_engine(f'sqlite:///{base_dir}/test.db')
-        db_engine = create_engine(f'postgresql://{postgresql_user}:{postgresql_password}@localhost')
-        
-        table_name = 'claim' 
+        db_engine = create_engine(
+            f'postgresql://{postgresql_user}:{postgresql_password}@localhost')
+
+        table_name = 'claim'
         df = pd.read_sql_table(table_name, db_engine)
         claims_from_db = list(df.title)
         print(claims_from_db)
@@ -145,6 +139,7 @@ class GetServiceClaims(GetServiceClaims_pb2_grpc.GetClaimsServicer):
             claims.append(claim)
         return GetServiceClaims_pb2.GetClaimListReply(items=claims)
 
+
 class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
     def ReadPlates(self, request, context):
         guid = request.guid
@@ -153,8 +148,8 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
         current_datetime = current_datetime.strftime("%Y-%m-%d-%H-%M-%S")
         # plate_detection_output_path = f"{}{current_datetime}/"
         plate_detection_output_path = plate_detection_output_path + current_datetime + '/'
-        os.makedirs(plate_detection_output_path,exist_ok=True)
-        
+        os.makedirs(plate_detection_output_path, exist_ok=True)
+
         detected_plates = {}
         with grpc.insecure_channel(client_grpc_channel_address) as channel:
             stub = Camera_pb2_grpc.CameraStub(channel)
@@ -170,14 +165,16 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     new_name = get_new_name()
                     # vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
                     # cv2.imwrite(vehicle_path, frame)
-                    print(10*"1")
-                    detected_plate, detected_plate_image  = plate_detection(frame, save_dir=plate_detection_output_path, save=False)
-                    if detected_plate and len(detected_plate_image)!=0:
-                        print(10*"2")
+
+                    detected_plate, detected_plate_image = plate_detection(
+                        frame, save_dir=plate_detection_output_path, save=False)
+
+                    if detected_plate and len(detected_plate_image) != 0:
+
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
-                            print(10*"3")
-                            detected_plates[detected_plate]['number_of_detection'] += 1    
+
+                            detected_plates[detected_plate]['number_of_detection'] += 1
                             if detected_plates[detected_plate]['number_of_detection'] >= max_number_of_detection:
                                 # detected_plates = dict(sorted(detected_plates.items(), key=lambda x:x[1], reverse=True))
                                 # publish(detected_plates, path, guid=guid)
@@ -192,16 +189,17 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                             vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
                             detected_plate_path = f"{plate_detection_output_path}{new_name}.png"
                             cv2.imwrite(vehicle_path, frame)
-                            cv2.imwrite(detected_plate_path, detected_plate_image)
+                            cv2.imwrite(detected_plate_path,
+                                        detected_plate_image)
                             detected_plates[detected_plate] = {}
                             detected_plates[detected_plate]['number_of_detection'] = 1
                             detected_plates[detected_plate]['plate_image_path'] = detected_plate_path
                             detected_plates[detected_plate]['vehicle_image_path'] = vehicle_path
-                            
+
             except KeyboardInterrupt:
                 return ''
         return ''
-                # cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
         # x = stream_camera_from_back_service()
         # print(x)
         # for i in range(10):
@@ -213,6 +211,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
 #         for i in range(10):
 #             time.sleep(1)
 #             yield ReadPlate_pb2.ReadPlateReply(plate=f'11dal2225{i}', image_path='C://temp')
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -234,6 +233,7 @@ def serve():
             time.sleep(60 * 60 * 24)  # Keep server running
     except KeyboardInterrupt:
         server.stop(0)
+
 
 if __name__ == '__main__':
     serve()
