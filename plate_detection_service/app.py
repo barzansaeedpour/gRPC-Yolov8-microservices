@@ -168,6 +168,8 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     nparr = np.frombuffer(base64_frame, np.uint8)
                     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                     new_name = get_new_name()
+                    vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
+                    cv2.imwrite(vehicle_path, frame)
                     # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
                     detected_plate, detected_plate_image  = plate_detection(frame, save_dir=plate_detection_output_path, save=False)
                     if detected_plate and len(detected_plate_image)!=0:

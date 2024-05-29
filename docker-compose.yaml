@@ -30,26 +30,22 @@ services:
     # depends_on:
     #   - db
     environment:
-        base_dir_camera_webapp : "D:/gRPC-Yolov8-microservices/camera_webapp"
-        base_dir_plate_detection : "D:/gRPC-Yolov8-microservices/plate_detection_service"
-        base_dir_client : "D:/gRPC-Yolov8-microservices/client"
-        base_dir_server : "D:/gRPC-Yolov8-microservices/server"
-        # client_grpc_channel_address : "camera-service-server:81"
+        base_dir_plate_detection : "/plate_detection"
         client_grpc_channel_address : "172.30.192.1:7400"
         server_grpc_channel_address : "0.0.0.0:81"
         debug : True
         postgresql_user : 'postgres'
         postgresql_password : 'mysecretpassword'
-        AMQP_URL : 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
         REDIS_HOST : 'localhost'
         REDIS_PORT : 6379
         REDIS_EXPIRE_SECONDS : 86400
         FRAMES_PER_SECOND : 3
         MAX_NUMBER_OF_DETECTION : 8
-
+    ports:
+      - "81:81"
     volumes:
-      - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
-      - D:/gRPC-Yolov8-microservices/client/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
+      - D:/gRPC-Yolov8-microservices/plate_detection_service/detected_plates:/plate_detection/detected_plates
+      # - D:/gRPC-Yolov8-microservices/plate_detection_service/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
   
   
 # volumes:
