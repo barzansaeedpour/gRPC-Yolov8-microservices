@@ -9,13 +9,16 @@ from dotenv import find_dotenv, load_dotenv
 import psycopg2
 from token_claim_validation import token_claim_validation
 
+print(200*"*")
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 base_dir = os.getenv("base_dir_camera_webapp")
+camera_webapp_address = os.getenv("camera_webapp_address")
+postgresql_user = os.getenv("postgresql_user")
+postgresql_password = os.getenv("postgresql_password")
 debug = os.getenv("debug")
-postgresql_user = 'postgres'
-postgresql_password = 'mysecretpassword'
+
 
 print(base_dir)
 
@@ -253,10 +256,10 @@ def cameras():
 
 
 if __name__ == "__main__":
-    print("main")
-    # app.run(debug=True) 
+    print(30*"main")
+    app.run(debug=True) 
     with app.app_context():
         db.create_all()
         fill_database()
-    app.run(debug=debug, host='0.0.0.0')
+    app.run(debug=debug, host=camera_webapp_address)
     

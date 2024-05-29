@@ -185,7 +185,6 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                                 # response.cancel()
                                 return ReadPlate_pb2.ReadPlateReply(result=str(detected_plates))
                         else:
-                            print(10*"4")
                             vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
                             detected_plate_path = f"{plate_detection_output_path}{new_name}.png"
                             cv2.imwrite(vehicle_path, frame)

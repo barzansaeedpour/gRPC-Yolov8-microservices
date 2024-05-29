@@ -2,52 +2,72 @@ version: '3.8'
 
 services:
 ####################################### 
-#   db:
-#     image: postgres:alpine
-#     environment:
-#       POSTGRES_PASSWORD: mysecretpassword
-#     volumes:
-#       - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
-#     ports:
-#       - "5432:5432"
-# ###########################################
-#   pgadmin:
-#     image: dpage/pgadmin4
-#     environment:
-#       PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
-#       PGADMIN_DEFAULT_PASSWORD: root
-#     ports:
-#       - "8080:80"
-###########################################
-  plate_detection_service:
-    # image: my_yolov822:latest
-    build: 
-      context: ./plate_detection_service
-      dockerfile: ./Dockerfile
-    image: plate-detection-service:latest
-    container_name: plate-detection-service
-    # restart: always
-    # depends_on:
-    #   - db
+  db:
+    image: postgres:alpine
     environment:
-        # base_dir_plate_detection : "/plate_detection"
-        base_dir_plate_detection : "."
-        client_grpc_channel_address : "172.30.192.1:7400"
-        server_grpc_channel_address : "0.0.0.0:81"
-        debug : True
-        postgresql_user : 'postgres'
-        postgresql_password : 'mysecretpassword'
-        REDIS_HOST : 'localhost'
-        REDIS_PORT : 6379
-        REDIS_EXPIRE_SECONDS : 86400
-        FRAMES_PER_SECOND : 3
-        MAX_NUMBER_OF_DETECTION : 8
-    ports:
-      - "81:81"
+      POSTGRES_PASSWORD: mysecretpassword
     volumes:
-      # - C:/:/plate_detection/detected_plates
-      - D:/gRPC-Yolov8-microservices/plate_detection_service/detected_plates:/plate_detection/detected_plates
-      # - D:/gRPC-Yolov8-microservices/plate_detection_service/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
+      - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+# ###########################################
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "8080:80"
+###########################################
+  camera_webapp:
+    build: 
+      context: ./camera_webapp
+      dockerfile: ./Dockerfile
+    image: camera_webapp:latest
+    container_name: camera_webapp
+    depends_on:
+      - db
+    environment:
+        base_dir_camera_webapp: "."
+        authentication_service_address: "localhost:6985"
+        # client_grpc_channel_address : "172.30.192.1:7400"
+        # server_grpc_channel_address : "0.0.0.0:81"
+        debug: True
+        postgresql_user: 'postgres'
+        postgresql_password: 'mysecretpassword'
+    ports:
+      - "5000:5000"
+    
+###########################################
+  # plate_detection_service:
+  #   # image: my_yolov822:latest
+  #   build: 
+  #     context: ./plate_detection_service
+  #     dockerfile: ./Dockerfile
+  #   image: plate-detection-service:latest
+  #   container_name: plate-detection-service
+  #   # restart: always
+  #   # depends_on:
+  #   #   - db
+  #   environment:
+  #       # base_dir_plate_detection : "/plate_detection"
+  #       base_dir_plate_detection : "."
+  #       client_grpc_channel_address : "172.30.192.1:7400"
+  #       server_grpc_channel_address : "0.0.0.0:81"
+  #       debug : True
+  #       postgresql_user : 'postgres'
+  #       postgresql_password : 'mysecretpassword'
+  #       REDIS_HOST : 'localhost'
+  #       REDIS_PORT : 6379
+  #       REDIS_EXPIRE_SECONDS : 86400
+  #       FRAMES_PER_SECOND : 3
+  #       MAX_NUMBER_OF_DETECTION : 8
+  #   ports:
+  #     - "81:81"
+  #   volumes:
+  #     # - C:/:/plate_detection/detected_plates
+  #     - D:/gRPC-Yolov8-microservices/plate_detection_service/detected_plates:/plate_detection/detected_plates
+  #     # - D:/gRPC-Yolov8-microservices/plate_detection_service/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
   
   
 # volumes:
