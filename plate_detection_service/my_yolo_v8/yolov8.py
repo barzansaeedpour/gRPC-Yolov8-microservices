@@ -7,13 +7,16 @@ import math
 import time
 from PIL import ImageFont, ImageDraw, Image
 from my_yolo_v8.rabbitmq.publisher import publish
-
+from dotenv import find_dotenv, load_dotenv
 from my_yolo_v8.utils.utils import extract_the_plate, check_detected_classes_validation, get_new_name, persian
 
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+base_dir = os.getenv("base_dir_plate_detection")
 
 
-model_plate_detection = YOLO(f"./my_yolo_v8/models/plate-detector.pt")
-model_character_detection = YOLO(f"./my_yolo_v8/models/character-detector.pt")
+model_plate_detection = YOLO(f"{base_dir}/my_yolo_v8/models/plate-detector.pt")
+model_character_detection = YOLO(f"{base_dir}/my_yolo_v8/models/character-detector.pt")
 
 # plate_detection_output_path = "/code/my_yolo_v8/outputs/"
 # plate_detection_output_path = ""
@@ -23,8 +26,8 @@ model_character_detection = YOLO(f"./my_yolo_v8/models/character-detector.pt")
 #     pass
 # os.makedirs(plate_detection_output_path, exist_ok=True)
 
-plate_detection_path = './my_yolo_v8/outputs2/plate_detection_path/'
-character_detection_path = './my_yolo_v8/outputs2/character_detection_path/'
+plate_detection_path = f'{base_dir}/my_yolo_v8/outputs2/plate_detection_path/'
+character_detection_path = f'{base_dir}/my_yolo_v8/outputs2/character_detection_path/'
 
 classNames = ['plate']
 # classNames2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'be', 'dal', 'ein', 'ghaf', 'h', 'jim', 'lam', 'mim', 'noon', 'sad', 'sin', 'ta', 'te', 'waw', 'ye']

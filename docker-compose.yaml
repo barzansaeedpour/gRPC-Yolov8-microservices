@@ -30,7 +30,8 @@ services:
     # depends_on:
     #   - db
     environment:
-        base_dir_plate_detection : "/plate_detection"
+        # base_dir_plate_detection : "/plate_detection"
+        base_dir_plate_detection : "/"
         client_grpc_channel_address : "172.30.192.1:7400"
         server_grpc_channel_address : "0.0.0.0:81"
         debug : True
@@ -44,7 +45,8 @@ services:
     ports:
       - "81:81"
     volumes:
-      - D:/gRPC-Yolov8-microservices/plate_detection_service/detected_plates:/plate_detection/detected_plates
+      - C:/:/plate_detection/detected_plates
+      # - D:/gRPC-Yolov8-microservices/plate_detection_service/detected_plates:/plate_detection/detected_plates
       # - D:/gRPC-Yolov8-microservices/plate_detection_service/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
   
   

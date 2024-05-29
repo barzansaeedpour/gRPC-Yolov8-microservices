@@ -168,13 +168,15 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                     nparr = np.frombuffer(base64_frame, np.uint8)
                     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                     new_name = get_new_name()
-                    vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
-                    cv2.imwrite(vehicle_path, frame)
-                    # b = cv2.imwrite(f"{save_dir}{new_name}.png", frame)
+                    # vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
+                    # cv2.imwrite(vehicle_path, frame)
+                    print(10*"1")
                     detected_plate, detected_plate_image  = plate_detection(frame, save_dir=plate_detection_output_path, save=False)
                     if detected_plate and len(detected_plate_image)!=0:
+                        print(10*"2")
                         # publish(plate= detected_plate)
                         if detected_plate in detected_plates.keys():
+                            print(10*"3")
                             detected_plates[detected_plate]['number_of_detection'] += 1    
                             if detected_plates[detected_plate]['number_of_detection'] >= max_number_of_detection:
                                 # detected_plates = dict(sorted(detected_plates.items(), key=lambda x:x[1], reverse=True))
@@ -186,6 +188,7 @@ class ReadPlate(ReadPlate_pb2_grpc.ReadPlateServicer):
                                 # response.cancel()
                                 return ReadPlate_pb2.ReadPlateReply(result=str(detected_plates))
                         else:
+                            print(10*"4")
                             vehicle_path = f"{plate_detection_output_path}{new_name}-frame.png"
                             detected_plate_path = f"{plate_detection_output_path}{new_name}.png"
                             cv2.imwrite(vehicle_path, frame)
