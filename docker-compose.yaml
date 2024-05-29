@@ -16,7 +16,27 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "8080:80"
-      
+
+  plate_detection_service:
+    # image: my_yolov822:latest
+    environment:
+        # AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+        AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+    build: 
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: plate-detection:latest
+    container_name: plate-detection
+    # restart: always
+    depends_on:
+      - camera-service-server
+      - rabbit_mq
+
+    volumes:
+      - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
+      - D:/gRPC-Yolov8-microservices/client/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
+  
+  
   # producer:
   #   build: producer
   #   depends_on:
@@ -25,25 +45,25 @@ services:
   #       AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
   #   volumes:
   #     - ./producer:/usr/src/app/producer
-  consumer1:
-    build: consumer
-    depends_on:
-        - rabbit_mq
-    environment:
-        AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-    volumes:
-      - ./consumer:/usr/src/app/consumer
-  rabbit_mq:
-    # we use management image to get the
-    # plugin for web dashboard
-    # image: rabbitmq:3.8-rc-management
-    image: rabbitmq:management
-    container_name: rabbit_mq
-    ports:
-        - '5672:5672'
-        - '15672:15672'
-    volumes:
-      - rabbit_mqdata:/usr/share/rabbitmq/data
+  # consumer1:
+  #   build: consumer
+  #   depends_on:
+  #       - rabbit_mq
+  #   environment:
+  #       AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+  #   volumes:
+  #     - ./consumer:/usr/src/app/consumer
+  # rabbit_mq:
+  #   # we use management image to get the
+  #   # plugin for web dashboard
+  #   # image: rabbitmq:3.8-rc-management
+  #   image: rabbitmq:management
+  #   container_name: rabbit_mq
+  #   ports:
+  #       - '5672:5672'
+  #       - '15672:15672'
+  #   volumes:
+  #     - rabbit_mqdata:/usr/share/rabbitmq/data
   # rabbitmq:
   #   image: rabbitmq:management
   #   container_name: rabbitmq
