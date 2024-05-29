@@ -2,22 +2,22 @@ version: '3.8'
 
 services:
 ####################################### 
-  db:
-    image: postgres:alpine
-    environment:
-      POSTGRES_PASSWORD: mysecretpassword
-    volumes:
-      - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+  # db:
+  #   image: postgres:alpine
+  #   environment:
+  #     POSTGRES_PASSWORD: mysecretpassword
+  #   volumes:
+  #     - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
 # ###########################################
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "8080:80"
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
+  #     PGADMIN_DEFAULT_PASSWORD: root
+  #   ports:
+  #     - "8080:80"
 ###########################################
   camera_webapp:
     build: 
@@ -25,11 +25,12 @@ services:
       dockerfile: ./Dockerfile
     image: camera_webapp:latest
     container_name: camera_webapp
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     environment:
         base_dir_camera_webapp: "."
         authentication_service_address: "localhost:6985"
+        camera_webapp_address: "0.0.0.0:5000"
         # client_grpc_channel_address : "172.30.192.1:7400"
         # server_grpc_channel_address : "0.0.0.0:81"
         debug: True
