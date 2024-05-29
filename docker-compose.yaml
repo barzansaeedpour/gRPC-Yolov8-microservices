@@ -1,42 +1,63 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:alpine
-    environment:
-      POSTGRES_PASSWORD: mysecretpassword
-    volumes:
-      - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "8080:80"
-
+####################################### 
+#   db:
+#     image: postgres:alpine
+#     environment:
+#       POSTGRES_PASSWORD: mysecretpassword
+#     volumes:
+#       - D:/gRPC-Yolov8-microservices/postgres-data:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
+# ###########################################
+#   pgadmin:
+#     image: dpage/pgadmin4
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: barzansaeedpour@gmail.com
+#       PGADMIN_DEFAULT_PASSWORD: root
+#     ports:
+#       - "8080:80"
+###########################################
   plate_detection_service:
     # image: my_yolov822:latest
-    environment:
-        # AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
-        AMQP_URL: 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
     build: 
-      context: ./client
+      context: ./plate_detection_service
       dockerfile: ./Dockerfile
-    image: plate-detection:latest
-    container_name: plate-detection
+    image: plate-detection-service:latest
+    container_name: plate-detection-service
     # restart: always
-    depends_on:
-      - camera-service-server
-      - rabbit_mq
+    # depends_on:
+    #   - db
+    environment:
+        base_dir_camera_webapp : "D:/gRPC-Yolov8-microservices/camera_webapp"
+        base_dir_plate_detection : "D:/gRPC-Yolov8-microservices/plate_detection_service"
+        base_dir_client : "D:/gRPC-Yolov8-microservices/client"
+        base_dir_server : "D:/gRPC-Yolov8-microservices/server"
+        # client_grpc_channel_address : "camera-service-server:81"
+        client_grpc_channel_address : "172.30.192.1:7400"
+        server_grpc_channel_address : "0.0.0.0:81"
+        debug : True
+        postgresql_user : 'postgres'
+        postgresql_password : 'mysecretpassword'
+        AMQP_URL : 'amqp://rabbit_mq?connection_attempts=10&retry_delay=10'
+        REDIS_HOST : 'localhost'
+        REDIS_PORT : 6379
+        REDIS_EXPIRE_SECONDS : 86400
+        FRAMES_PER_SECOND : 3
+        MAX_NUMBER_OF_DETECTION : 8
 
     volumes:
       - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
       - D:/gRPC-Yolov8-microservices/client/my_yolo_v8/outputs:/code/my_yolo_v8/outputs
   
   
+# volumes:
+#   plate_detection_service:
+#     - D:/gRPC-Yolov8-microservices/plate_detection_service/detected_plates:/code/detected_plates
+
+
+
   # producer:
   #   build: producer
   #   depends_on:
@@ -122,9 +143,8 @@ services:
   #   #   - /dev/video0:/dev/video0  # Map the camera device
 
   
-volumes:
-    rabbit_mqdata:
-      driver: local
+    # rabbit_mqdata:
+    #   driver: local
 # volumes:
 #   plate-detection-client:
 #     - D:/gRPC-Yolov8-microservices/client/saved_images:/code/saved_images
