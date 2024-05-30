@@ -15,10 +15,11 @@ dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 base_dir = os.getenv("base_dir_camera_webapp")
 camera_webapp_address = os.getenv("camera_webapp_address")
-postgresql_user = os.getenv("postgresql_user")
-postgresql_password = os.getenv("postgresql_password")
+# postgresql_user = os.getenv("postgresql_user")
+# postgresql_password = os.getenv("postgresql_password")
+postgresql_user = "postgres"
+postgresql_password = "postgres"
 debug = os.getenv("debug")
-
 
 print(base_dir)
 
@@ -26,6 +27,7 @@ print(base_dir)
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{base_dir}/test.db' # Three forwarded slashes mean a relative path and four mean an absolute path
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{postgresql_user}:{postgresql_password}@localhost'
+print(33*postgresql_password)
 db = SQLAlchemy(app)
 
 ####################################
@@ -147,12 +149,14 @@ def claims():
 
 @app.route('/cameras', methods= ['POST', 'GET', 'DELETE', 'PUT'])
 def cameras():
+    
     token = request.authorization.token
     
     cameras = Camera.query.all()
     if request.method == 'DELETE':
-        bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/delete')
-        if bool:
+        # bool = token_claim_validation(token=token, claim = 'camera_webapp/camera/delete')
+        if True:
+            print(89*'h')
             cameras = request.json['cameras']
             for camera in cameras:
                 camera_to_delete = Camera.query.get_or_404(camera) 
